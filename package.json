@@ -1,0 +1,19 @@
+{
+  "name": "pepys-timeline",
+  "description": "Timeline display of data availability",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/debrief/pepys-timeline.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/debrief/pepys-timeline/issues"
+  },
+  "homepage": "https://github.com/debrief/pepys-timeline"
+}
