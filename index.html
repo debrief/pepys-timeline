@@ -3,21 +3,31 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>Visavail.js Example: Basic Configuration</title>
+	<title>Pepys Coverage</title>
 
 	<!-- Visavail.js style -->
 	<link href='https://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
 	<link href='visavail.css' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="bootstrap.min.css">
 		
-<!-- font-awesome -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+	<!-- font-awesome -->
+	<link
+		href="https://fonts.googleapis.com/css?family=Muli"
+		rel="stylesheet"
+		type="text/css"
+	>
+	<link
+		rel="stylesheet"
+		href="https://use.fontawesome.com/releases/v5.0.12/css/all.css"
+		integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9"
+		crossorigin="anonymous"
+	>
 
-
-	<!-- body style for this example -->
-	<style>
+	<style type="text/css">
 		body {
-			font-family: "Muli", "Helvetica", Arial, sans-serif;
+		}
+		#data-received-button {
+			margin-bottom: 50px;
 		}
 	</style>
 
@@ -26,10 +36,16 @@
 <body>
 	<div class="container">
 		<div class="col-md-12">
-			<h1>Visavail.js Basic Example</h1>
+			<h1>Pepys Coverage</h1>
 		</div>	
 		<div class="col-md-12">
 			<div style="overflow: hidden;" class="visavail" id="visavail_container">
+				 <button
+					type="button"
+					id="data-received-button"
+				 >
+				 	Data Received
+				 </button>
 				<p id="visavail_graph">
 					<!-- Visavail.js chart will be placed here -->
 				</p>
@@ -46,7 +62,9 @@
 	<script src="visavail.js"></script>
 	<!-- <script src="../visavail/js/visavail.min.js"></script> -->
 
+
 	<script>
+		moment.locale("en");
 		var commonDate = new Date("01/01/2020");
 		var stripDateOfChars = date => date.toISOString().slice(0,-5).replace('T', ' ');
 
@@ -152,12 +170,21 @@
 		var options = {
 			id_div_container: "visavail_container",
 			id_div_graph: "visavail_graph",
-			
+
+			title: {
+				text: rawData[0].serial,
+			},
 			icon: {
 				class_has_data: 'fas fa-fw fa-check',
 				class_has_no_data: 'fas fa-fw fa-exclamation-circle'
 			},
-			
+			legend: {
+				has_data_text: 'Coverage available',
+				has_no_data_text: 'Coverage unavailable',
+			},
+			responsive: {
+				enabled: true,
+			}
 		};
 		
 		var chart = visavail.generate(options, transformedData);
