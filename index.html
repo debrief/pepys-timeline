@@ -35,34 +35,73 @@
 			margin-bottom: 50px;
 			margin-right: 30px;
 		}
+		.subheading, .xAxis {
+		    display: none;
+		}
+		.chart-row {
+		    justify-content: space-between;
+		}
 	</style>
 
 </head>
 
 <body>
 	<div class="container">
-		<div class="col-md-12">
-			<h1>Pepys Coverage</h1>
-		</div>	
-		<div class="col-md-12">
-			<div style="overflow: hidden;" class="visavail" id="visavail_container">
-				<div id="toolbar">
-					<button
-						type="button"
-						class="btn btn-success"
-						id="data-received-button"
-						onclick="onDataReceived()"
-					 >
-				 	Data Received
-				 </button>
-				</div>
-				<p id="visavail_graph">
-					<!-- Visavail.js chart will be placed here -->
-				</p>
-				
-			</div>
-			
-		</div>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Pepys Coverage</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="toolbar">
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        id="data-received-button"
+                        onclick="onDataReceived()"
+                     >
+                    Data Received
+                 </button>
+                </div>
+            </div>
+        </div>
+        <div class="row chart-row">
+            <div class="col-sm-12 col-md-2">
+                <div style="overflow: hidden;" class="visavail" id="visavail_container">
+                    <p id="visavail_graph">
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-2">
+                <div style="overflow: hidden;" class="visavail" id="visavail_container_2">
+                    <p id="visavail_graph_2">
+                        placeholder chart 2
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-2">
+                <div style="overflow: hidden;" class="visavail" id="visavail_container_3">
+                    <p id="visavail_graph_3">
+                        placeholder chart 3
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-2">
+                <div style="overflow: hidden;" class="visavail" id="visavail_container_4">
+                    <p id="visavail_graph_4">
+                        placeholder chart 4
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-2">
+                <div style="overflow: hidden;" class="visavail" id="visavail_container_5">
+                    <p id="visavail_graph_5">
+                        placeholder chart 5
+                    </p>
+                </div>
+            </div>
+        </div>
 	</div>
 	<script src="moment-with-locales.min.js" type="text/javascript"></script>
 
@@ -193,12 +232,14 @@
 				class_has_no_data: 'fas fa-fw fa-exclamation-circle'
 			},
 			legend: {
+			    enabled: false,
 				has_data_text: 'Coverage available',
 				has_no_data_text: 'Coverage unavailable',
 			},
 			responsive: {
 				enabled: true,
 			},
+
 		};
 		
 		var chart = visavail.generate(options, transformedData);
