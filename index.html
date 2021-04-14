@@ -35,11 +35,17 @@
 			margin-bottom: 50px;
 			margin-right: 30px;
 		}
-		.subheading, .xAxis {
+		.xAxis {
 		    display: none;
 		}
 		.chart-row {
 		    justify-content: space-between;
+		}
+		.visavail .rect_has_no_data {
+		    fill: lightgray;
+		}
+		.visavail .rect_has_no_data:hover {
+		    fill: silver;
 		}
 	</style>
 
@@ -228,6 +234,9 @@
 
 			title: {
 				text: rawData[0].serial,
+			},
+			sub_title: {
+			    enabled: false,
 			},
 			icon: {
 				class_has_data: 'fas fa-fw fa-check',
