@@ -25,7 +25,11 @@
 
 	<style type="text/css">
 		body {
+		    background-color: lightgray;
 		}
+		.col-*{
+          background-color: white;
+        }
 		#toolbar {
 			display: flex;
 			flex-direction: row;
@@ -49,6 +53,16 @@
 		}
 		.chart-row {
 		    justify-content: space-between;
+		}
+		.chart-col {
+		    padding: 10px;
+		    min-height: 300px;
+		}
+		.chart-container {
+		    height: 100%;
+		    background-color: white;
+		    border-radius: 0.5em;
+		    padding: 10px;
 		}
 		.visavail .rect_has_no_data {
 		    fill: lightgray;
@@ -88,41 +102,51 @@
             </div>
         </div>
         <div class="row chart-row">
-            <div class="col-sm-12 col-md-3">
-                <h5 class="platform-heading">J05130 - CASEX 324</h5>
-                <div style="overflow: hidden;" class="visavail" id="visavail_container">
-                    <p id="visavail_graph">
-                    </p>
+            <div class="col-sm-12 col-md-3 chart-col">
+                <div class="chart-container">
+                    <h5 class="platform-heading">J05130 - CASEX 324</h5>
+                    <div style="overflow: hidden;" class="visavail" id="visavail_container">
+                        <p id="visavail_graph">
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3">
-                <div style="overflow: hidden;" class="visavail" id="visavail_container_2">
-                    <p id="visavail_graph_2">
-                        placeholder chart 2
-                    </p>
+            <div class="col-sm-12 col-md-3 chart-col">
+                <div class="chart-container">
+                    <div style="overflow: hidden;" class="visavail" id="visavail_container_2">
+                        <p id="visavail_graph_2">
+                            placeholder chart 2
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3">
-                <div style="overflow: hidden;" class="visavail" id="visavail_container_3">
-                    <p id="visavail_graph_3">
-                        placeholder chart 3
-                    </p>
+            <div class="col-sm-12 col-md-3 chart-col">
+                <div class="chart-container">
+                    <div style="overflow: hidden;" class="visavail" id="visavail_container_3">
+                        <p id="visavail_graph_3">
+                            placeholder chart 3
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-3">
-                <div style="overflow: hidden;" class="visavail" id="visavail_container_4">
-                    <p id="visavail_graph_4">
-                        placeholder chart 4
-                    </p>
+            <div class="col-sm-12 col-md-3 chart-col">
+                <div class="chart-container">
+                    <div style="overflow: hidden;" class="visavail" id="visavail_container_4">
+                        <p id="visavail_graph_4">
+                            placeholder chart 4
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="row chart-row">
-            <div class="col-sm-12 col-md-3">
-                <div style="overflow: hidden;" class="visavail" id="visavail_container_5">
-                    <p id="visavail_graph_5">
-                        placeholder chart 5
-                    </p>
+            <div class="col-sm-12 col-md-3 chart-col">
+                <div class="chart-container">
+                    <div style="overflow: hidden;" class="visavail" id="visavail_container_5">
+                        <p id="visavail_graph_5">
+                            placeholder chart 5
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
