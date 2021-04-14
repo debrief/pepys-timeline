@@ -8,7 +8,7 @@
 	<!-- Visavail.js style -->
 	<link href='https://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
 	<link href='visavail.css' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="bootstrap.min.css">
+	<link href="bootstrap.min.css" rel="stylesheet" type='text/css'>
 		
 	<!-- font-awesome -->
 	<link
@@ -26,8 +26,14 @@
 	<style type="text/css">
 		body {
 		}
+		#toolbar {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+		}
 		#data-received-button {
 			margin-bottom: 50px;
+			margin-right: 30px;
 		}
 	</style>
 
@@ -40,12 +46,16 @@
 		</div>	
 		<div class="col-md-12">
 			<div style="overflow: hidden;" class="visavail" id="visavail_container">
-				 <button
-					type="button"
-					id="data-received-button"
-				 >
+				<div id="toolbar">
+					<button
+						type="button"
+						class="btn btn-success"
+						id="data-received-button"
+						onclick="onDataReceived()"
+					 >
 				 	Data Received
 				 </button>
+				</div>
 				<p id="visavail_graph">
 					<!-- Visavail.js chart will be placed here -->
 				</p>
@@ -62,9 +72,13 @@
 	<script src="visavail.js"></script>
 	<!-- <script src="../visavail/js/visavail.min.js"></script> -->
 
-
-	<script>
+	<script type="text/javascript">
 		moment.locale("en");
+
+		function onDataReceived() {
+			console.log('on data received');
+		}
+
 		var commonDate = new Date("01/01/2020");
 		var stripDateOfChars = date => date.toISOString().slice(0,-5).replace('T', ' ');
 
@@ -184,7 +198,7 @@
 			},
 			responsive: {
 				enabled: true,
-			}
+			},
 		};
 		
 		var chart = visavail.generate(options, transformedData);
