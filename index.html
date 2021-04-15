@@ -153,9 +153,6 @@
 			console.log('on data received');
 		}
 
-		var commonDate = new Date("01/01/2020");
-		var stripDateOfChars = date => date.toISOString().slice(0, -5).replace('T', ' ');
-
 		var rawData = [
 			{
 				"serial": "J05130 - CASEX 324",
@@ -164,7 +161,7 @@
 				"participants": [
 					{
 						"name": "RICH",
-						"platform-type": 'frigate',
+						"platform-type": 'icons/blue_frigate.svg',
 						"percent-coverage": 65,
 						"coverage": [
 							['2016-01-01 10:00:00', '2016-01-01 10:40:00'],
@@ -174,7 +171,7 @@
 					},
 					{
 						"name": "DUKE",
-						"platform-type": 'patrol',
+						"platform-type": 'icons/blue_patrol.svg',
 						"percent-coverage": 35,
 						"coverage": [
 							['2016-01-01 10:15:00', '2016-01-01 10:30:00'],
@@ -184,7 +181,7 @@
 					},
 					{
 						"name": "CUMB",
-						"platform-type": 'merchant',
+						"platform-type": 'icons/blue_merchant.svg',
 						"percent-coverage": 75,
 						"coverage": [
 							['2016-01-01 10:00:00', '2016-01-01 10:05:00'],
@@ -201,7 +198,7 @@
 				"participants": [
 					{
 						"name": "TRAV",
-						"platform-type": 'frigate',
+						"platform-type": 'icons/blue_frigate.svg',
 						"percent-coverage": 65,
 						"coverage": [
 							['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
@@ -211,7 +208,7 @@
 					},
 					{
 						"name": "PART",
-						"platform-type": 'patrol',
+						"platform-type": 'icons/blue_patrol.svg',
 						"percent-coverage": 35,
 						"coverage": [
 							['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
@@ -221,7 +218,7 @@
 					},
 					{
 						"name": "MISH",
-						"platform-type": 'merchant',
+						"platform-type": 'icons/blue_merchant.svg',
 						"percent-coverage": 75,
 						"coverage": [
 							['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
