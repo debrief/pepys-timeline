@@ -51,6 +51,10 @@
 			padding: 10px;
 		}
 
+        .visavail #yAxis {
+            display: none;
+        }
+
 		.visavail .rect_has_no_data {
 			fill: lightgray;
 		}
@@ -304,6 +308,36 @@
 		}
 
 	</script>
+
+    <script>
+        const graphContainerObjs = document.getElementsByClassName('visavail');
+        console.log('graphContainerObjs', graphContainerObjs);
+        const graphContainers = Array.prototype.slice.call(graphContainerObjs);
+        console.log('graphContainers', graphContainers);
+        graphContainers.forEach((container, containerIndex) => {
+            console.log('container', container);
+            const graph = document.querySelectorAll('#' + container.id + ' > p')[0];
+            console.log('graph', graph);
+            const group = graph.querySelector('svg').querySelector('g');
+            console.log('group', group);
+            const groupData = group.querySelector("#g_data");
+            console.log('groupData', groupData);
+            const datasets = Array.from(groupData.childNodes).filter(function (item) {
+                return item.classList.contains('dataset');
+            });
+            console.log('datasets', datasets);
+            datasets.forEach((dataset, datasetIndex) => {
+                const participantLabel = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+                participantLabel.innerHTML = transformedData[containerIndex  % 2][datasetIndex].measure;
+                participantLabel.setAttribute('x', 0);
+                participantLabel.setAttribute('y', 24);
+                participantLabel.setAttribute('font-size', 'smaller');
+                participantLabel.setAttribute('font-family', 'Arial, Helvetica, sans-serif');
+                participantLabel.classList.add('participant-label');
+                dataset.appendChild(participantLabel);
+            });
+        });
+    </script>
 </body>
 
 </html>
