@@ -191,12 +191,12 @@
 				]
 			},
 			{
-				"serial": "J05150 - PASSED 4A",
+				"serial": "J05150 - PASSEX 4A",
 				"start_time": '2016-01-01 12:00:00',
 				"end_time": '2016-01-01 14:00:00',
 				"participants": [
 					{
-						"name": "RICH",
+						"name": "TRAV",
 						"platform-type": 'frigate',
 						"percent-coverage": 65,
 						"coverage": [
@@ -206,7 +206,7 @@
 						]
 					},
 					{
-						"name": "DUKE",
+						"name": "PART",
 						"platform-type": 'patrol',
 						"percent-coverage": 35,
 						"coverage": [
@@ -216,7 +216,7 @@
 						]
 					},
 					{
-						"name": "CUMB",
+						"name": "MISH",
 						"platform-type": 'merchant',
 						"percent-coverage": 75,
 						"coverage": [
@@ -229,72 +229,66 @@
 			}
 		];
 
-		var transformedData = []
-		transformedData[0] = rawData[0].participants.map(participant => {
-			return {
-				"measure": participant.name,
-				"data": [
-					[rawData[0].start_time, 0, rawData[0].end_time]
-				].concat(participant.coverage.map(cov => {
+		var transformedData = rawData.map(serial => {
+			return serial.participants.map(participant => {
+				// overall coverage
+				const overall = [[serial.start_time, 0, serial.end_time]]
+				const coverage = participant.coverage.map(cov => {
 					return [cov[0], 1, cov[1]]
-				}))
-			}
-		});
-		transformedData[1] = rawData[1].participants.map(participant => {
-			return {
-				"measure": participant.name,
-				"data": [
-					[rawData[1].start_time, 0, rawData[1].end_time]
-				].concat(participant.coverage.map(cov => {
-					return [cov[0], 1, cov[1]]
-				}))
-			}
-		});
-
-		const charts = []
+				})
+				const data = overall.concat(coverage)
+				return {
+					measure: participant.name,
+					platformType: serial.platformType,
+					percentCoverage: serial.percentCoverage,
+					data: data
+				}
+			})
+		})
 
 		const options = {
-				margin: {
-					right: 0,
-					left: 100,
-					top: 30,
-					bottom: 0
-				},
-				title: {
-					enabled: false,
-					text: rawData[0].serial
-				},
-				sub_title: {
-					enabled: false
-				},
-				icon: {
-					class_has_data: 'fas fa-fw fa-check',
-					class_has_no_data: 'fas fa-fw fa-exclamation-circle'
-				},
-				legend: {
-					enabled: false,
-					has_data_text: 'Coverage available',
-					has_no_data_text: 'Coverage unavailable',
-				},
-				responsive: {
-					enabled: false,
-				},
-				line_spacing: 8,
-				ticks_for_graph: 2
-			};
+			margin: {
+				right: 0,
+				left: 100,
+				top: 30,
+				bottom: 0
+			},
+			title: {
+				enabled: false,
+				text: rawData[0].serial
+			},
+			icon: {
+				class_has_data: 'fas fa-fw fa-check',
+				class_has_no_data: 'fas fa-fw fa-exclamation-circle'
+			},
+			responsive: {
+				enabled: false,
+			},
+			line_spacing: 8,
+			ticks_for_graph: 2
+		};
+
+		// maintain list of charts, so we can resize them on browser resize
+		const charts = []
 
 		// create 5 graphs
 		for (i = 0; i < 5; i++) {
-			options.id_div_container = "visavail_container_" + (i+1)
-			options.id_div_graph= "visavail_graph_" + (i+1)
+			// override the target ids
+			options.id_div_container = "visavail_container_" + (i + 1)
+			options.id_div_graph = "visavail_graph_" + (i + 1)
 
-			charts[i] = visavail.generate(options, transformedData[i % 2]);
+			// take deep copy of data. For some reason using a dataset
+			// more than once mangles it
+			const data = JSON.parse(JSON.stringify(transformedData[i % 2]))
+
+			// create new chart instance
+			charts[i] = visavail.generate(options, data);
 		}
 
 		// resize timelines on page resize
-		window.onresize = function() {
+		window.onresize = function () {
 			const width = getWidth() / 6
-			for (i = 0; i < 5; i++) {
+			for (i = 0; i < charts.length; i++) {
 				charts[i].resizeWidth(width)
 			}
 		}
