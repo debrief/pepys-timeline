@@ -263,7 +263,10 @@
 					text: rawData[0].serial
 				},
 				margin: {
-					right: '0px'
+					right: 0,
+					left: i === 1 ? 0 : 100,
+					top: 30,
+					bottom: 0
 				},
 				sub_title: {
 					enabled: false
@@ -287,6 +290,7 @@
 			charts[i] = visavail.generate(options, transformedData);
 		}
 
+		// resize timelines on page resize
 		window.onresize = function() {
 			const width = getWidth() / 6
 			for (i = 0; i < 5; i++) {
