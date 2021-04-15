@@ -155,109 +155,97 @@
 		var rawData = [
 			{
 				"serial": "J05130 - CASEX 324",
-				"start_time": 1000,
-				"end_time": 1200,
+				"start_time": '2016-01-01 10:00:00',
+				"end_time": '2016-01-01 12:00:00',
 				"participants": [
 					{
 						"name": "RICH",
+						"platform-type": 'frigate',
+						"percent-coverage": 65,
 						"coverage": [
-							[1000, 1040],
-							[1050, 1105],
-							[1130, 1200],
+							['2016-01-01 10:00:00', '2016-01-01 10:40:00'],
+							['2016-01-01 10:50:00', '2016-01-01 11:05:00'],
+							['2016-01-01 11:30:00', '2016-01-01 12:00:00'],
 						]
 					},
 					{
 						"name": "DUKE",
+						"platform-type": 'patrol',
+						"percent-coverage": 35,
 						"coverage": [
-							[1015, 1030],
-							[1035, 1100],
-							[1140, 1200],
+							['2016-01-01 10:15:00', '2016-01-01 10:30:00'],
+							['2016-01-01 10:35:00', '2016-01-01 11:00:00'],
+							['2016-01-01 11:40:00', '2016-01-01 12:00:00'],
 						]
 					},
 					{
 						"name": "CUMB",
+						"platform-type": 'merchant',
+						"percent-coverage": 75,
 						"coverage": [
-							[1000, 1005],
-							[1045, 1100],
-							[1145, 1200],
+							['2016-01-01 10:00:00', '2016-01-01 10:05:00'],
+							['2016-01-01 10:45:00', '2016-01-01 11:00:00'],
+							['2016-01-01 11:45:00', '2016-01-01 12:00:00'],
+						]
+					}
+				]
+			},
+			{
+				"serial": "J05150 - PASSED 4A",
+				"start_time": '2016-01-01 12:00:00',
+				"end_time": '2016-01-01 14:00:00',
+				"participants": [
+					{
+						"name": "RICH",
+						"platform-type": 'frigate',
+						"percent-coverage": 65,
+						"coverage": [
+							['2016-01-01 12:00:00', '2016-01-01 23:10:00'],
+							['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
+							['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
+						]
+					},
+					{
+						"name": "DUKE",
+						"platform-type": 'patrol',
+						"percent-coverage": 35,
+						"coverage": [
+							['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
+							['2016-01-01 12:35:00', '2016-01-01 13:00:00'],
+							['2016-01-01 13:40:00', '2016-01-01 14:00:00'],
+						]
+					},
+					{
+						"name": "CUMB",
+						"platform-type": 'merchant',
+						"percent-coverage": 75,
+						"coverage": [
+							['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
+							['2016-01-01 12:45:00', '2016-01-01 11:00:00'],
+							['2016-01-01 13:45:00', '2016-01-01 13:40:00'],
 						]
 					}
 				]
 			}
 		];
 
-		const periodStart = rawData[0].start_time.toString();
-		const periodEnd = rawData[0].end_time.toString();
-		const periodStartHours = periodStart.substring(0, 2);
-		const periodStartMinutes = periodStart.substring(2, 4);
-		const periodEndHours = periodEnd.substring(0, 2);
-		const periodEndMinutes = periodEnd.substring(2, 4);
+		const periodStart = rawData[0].start_time;
+		const periodEnd = rawData[0].end_time;
 
 		var transformedData = rawData[0].participants.map(participant => {
 			return {
 				"measure": participant.name,
 				"data": [
-					[
-						stripDateOfChars(new Date(
-							commonDate.getFullYear(),
-							commonDate.getMonth(),
-							commonDate.getDate(),
-							periodStartHours,
-							periodStartMinutes,
-							0
-						)),
-						0,
-						stripDateOfChars(new Date(
-							commonDate.getFullYear(),
-							commonDate.getMonth(),
-							commonDate.getDate(),
-							periodEndHours,
-							periodEndMinutes,
-							0
-						)),
-					]
+					[periodStart, 0, periodEnd]
 				].concat(participant.coverage.map(cov => {
-					var [start, end] = cov;
-					start = start.toString();
-					end = end.toString();
-					const startHours = start.substring(0, 2);
-					const startMinutes = start.substring(2, 4);
-					const endHours = end.substring(0, 2);
-					const endMinutes = end.substring(2, 4);
-
-					const startDatetime = new Date(
-						commonDate.getFullYear(),
-						commonDate.getMonth(),
-						commonDate.getDate(),
-						startHours,
-						startMinutes,
-						0
-					);
-					const endDatetime = new Date(
-						commonDate.getFullYear(),
-						commonDate.getMonth(),
-						commonDate.getDate(),
-						endHours,
-						endMinutes,
-						0
-					);
-					const res = [
-						stripDateOfChars(startDatetime),
-						1,
-						stripDateOfChars(endDatetime),
-					];
-					return res;
+					return [cov[0], 1, cov[1]]
 				}))
 			}
 		});
 
 		const charts = []
 
-		// create 5 graphs
-		for (i = 0; i < 5; i++) {
-			var options = {
-				id_div_container: "visavail_container_" + (i+1),
-				id_div_graph: "visavail_graph_" + (i+1),
+		const options = {
 				margin: {
 					right: 0,
 					left: 100,
@@ -286,6 +274,11 @@
 				line_spacing: 8,
 				ticks_for_graph: 2
 			};
+
+		// create 5 graphs
+		for (i = 0; i < 5; i++) {
+			options.id_div_container = "visavail_container_" + (i+1)
+			options.id_div_graph= "visavail_graph_" + (i+1)
 
 			charts[i] = visavail.generate(options, transformedData);
 		}
