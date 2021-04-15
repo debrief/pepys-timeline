@@ -200,7 +200,7 @@
 						"platform-type": 'frigate',
 						"percent-coverage": 65,
 						"coverage": [
-							['2016-01-01 12:00:00', '2016-01-01 23:10:00'],
+							['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
 							['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
 							['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
 						]
@@ -221,7 +221,7 @@
 						"percent-coverage": 75,
 						"coverage": [
 							['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
-							['2016-01-01 12:45:00', '2016-01-01 11:00:00'],
+							['2016-01-01 12:45:00', '2016-01-01 13:00:00'],
 							['2016-01-01 13:45:00', '2016-01-01 13:40:00'],
 						]
 					}
@@ -229,14 +229,22 @@
 			}
 		];
 
-		const periodStart = rawData[0].start_time;
-		const periodEnd = rawData[0].end_time;
-
-		var transformedData = rawData[0].participants.map(participant => {
+		var transformedData = []
+		transformedData[0] = rawData[0].participants.map(participant => {
 			return {
 				"measure": participant.name,
 				"data": [
-					[periodStart, 0, periodEnd]
+					[rawData[0].start_time, 0, rawData[0].end_time]
+				].concat(participant.coverage.map(cov => {
+					return [cov[0], 1, cov[1]]
+				}))
+			}
+		});
+		transformedData[1] = rawData[1].participants.map(participant => {
+			return {
+				"measure": participant.name,
+				"data": [
+					[rawData[1].start_time, 0, rawData[1].end_time]
 				].concat(participant.coverage.map(cov => {
 					return [cov[0], 1, cov[1]]
 				}))
@@ -280,7 +288,7 @@
 			options.id_div_container = "visavail_container_" + (i+1)
 			options.id_div_graph= "visavail_graph_" + (i+1)
 
-			charts[i] = visavail.generate(options, transformedData);
+			charts[i] = visavail.generate(options, transformedData[i % 2]);
 		}
 
 		// resize timelines on page resize
