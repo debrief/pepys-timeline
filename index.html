@@ -44,19 +44,6 @@
 			margin-bottom: 50px;
 		}
 
-		.xAxis {
-			display: none;
-		}
-
-		.chart-row {
-			justify-content: space-between;
-		}
-
-		.chart-col {
-			padding: 10px;
-			min-height: 300px;
-		}
-
 		.chart-container {
 			height: 100%;
 			background-color: white;
@@ -264,18 +251,22 @@
 			}
 		});
 
-		// create 5 graphs
-		for (i = 1; i <= 5; i++) {
-			var options = {
-				id_div_container: "visavail_container_" + i,
-				id_div_graph: "visavail_graph_" + i,
+		const charts = []
 
+		// create 5 graphs
+		for (i = 0; i < 5; i++) {
+			var options = {
+				id_div_container: "visavail_container_" + (i+1),
+				id_div_graph: "visavail_graph_" + (i+1),
 				title: {
 					enabled: false,
-					text: rawData[0].serial,
+					text: rawData[0].serial
+				},
+				margin: {
+					right: '0px'
 				},
 				sub_title: {
-					enabled: false,
+					enabled: false
 				},
 				icon: {
 					class_has_data: 'fas fa-fw fa-check',
@@ -287,12 +278,30 @@
 					has_no_data_text: 'Coverage unavailable',
 				},
 				responsive: {
-					enabled: true,
+					enabled: false,
 				},
 				line_spacing: 8,
+				ticks_for_graph: 2
 			};
 
-			var chart = visavail.generate(options, transformedData);
+			charts[i] = visavail.generate(options, transformedData);
+		}
+
+		window.onresize = function() {
+			const width = getWidth() / 6
+			for (i = 0; i < 5; i++) {
+				charts[i].resizeWidth(width)
+			}
+		}
+
+		function getWidth() {
+			return Math.max(
+				document.body.scrollWidth,
+				document.documentElement.scrollWidth,
+				document.body.offsetWidth,
+				document.documentElement.offsetWidth,
+				document.documentElement.clientWidth
+			);
 		}
 
 	</script>
