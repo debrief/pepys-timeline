@@ -9,8 +9,14 @@ def create_app(config_path: str = None):
     app.config.from_object(config_path)
 
     register_blueprints(app)
+    register_extensions(app)
 
     return app
+
+
+def register_extensions(app):
+    from pepys_timeline.extensions import cors
+    cors.init_app(app)
 
 
 def register_blueprints(app):
