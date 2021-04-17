@@ -1,4 +1,10 @@
+import os.path
+import json
+
 from flask import Blueprint, current_app, render_template
+
+from pepys_timeline.config import STATIC_DIR
+
 
 api = Blueprint('api', __name__, url_prefix='')
 
@@ -17,4 +23,9 @@ def config():
 
 @api.route('/timelines')
 def timelines():
-    return 'not implemented'
+    with open(os.path.join(STATIC_DIR, 'serials.json'), 'r') as f:
+        serials = json.load(f)
+
+    return {
+        "serials": serials
+    }
