@@ -79,6 +79,29 @@ state_time_rankings as (
 							'[]'
 							) @> s.time
 ),
+participation_sans_activity as (
+	select
+		si.serial_participant_start start_time,
+		si.serial_participant_end end_time,
+		si.platform_id,
+		si.serial_id
+	from
+		sensors_involved si
+	where
+		not exists (select 1
+					from 
+						state_time_rankings s
+					where 
+						s.serial_id = si.serial_id
+							and 
+						s.platform_id = si.platform_id
+							and
+						tsrange(si.serial_participant_start,
+								si.serial_participant_end,
+								'[]'
+								) @> s.time
+				)
+),
 inner_gaps as (
 	select
 		s.time start_time,
@@ -158,6 +181,14 @@ consolidated_gaps as (
 		serial_id
 	from
 		gaps_at_serial_end
+	union all
+	select
+		start_time,
+		end_time,
+		platform_id,
+		serial_id
+	from
+		participation_sans_activity
 ),
 consolidated_gap_ranks as (
 	select
@@ -168,6 +199,76 @@ consolidated_gap_ranks as (
 		row_number() over (partition by serial_id, platform_id order by start_time asc) as rowno
 	from
 		consolidated_gaps
+),
+participation_sans_gap as (
+	select
+		si.serial_participant_start start_time,
+		si.serial_participant_end end_time,
+		si.platform_id,
+		si.serial_id
+	from
+		sensors_involved si
+	where
+		not exists (select 1
+					from 
+						consolidated_gaps cg
+					where 
+						si.serial_id = cg.serial_id
+							and
+						si.platform_id = cg.platform_id
+							and 
+						tsrange(si.serial_participant_start,
+								si.serial_participant_end,
+								'[]'
+								) @> cg.start_time
+				)
+),
+act_with_same_part_and_gap_start as (
+	select
+		cg.start_time,
+		cg.start_time end_time,
+		cg.platform_id,
+		cg.serial_id
+	from
+		consolidated_gap_ranks cg
+			inner join
+		state_time_rankings s
+				on cg.serial_id = s.serial_id
+				and cg.platform_id = s.platform_id
+				and cg.rowno = 1
+				and cg.start_time =  s.time
+			inner join
+		sensors_involved si
+				on si.serial_participant_start = cg.start_time
+				and si.platform_id = cg.platform_id
+				and si.serial_id = cg.serial_id
+),
+act_with_same_part_and_gap_end as (
+	select
+		cg.end_time start_time,
+		cg.end_time,
+		cg.platform_id,
+		cg.serial_id
+	from
+		consolidated_gap_ranks cg
+			inner join
+		state_time_rankings s
+				on cg.serial_id = s.serial_id
+				and cg.platform_id = s.platform_id
+				and cg.rowno = (select
+									max(cgrs1.rowno)
+								from
+									consolidated_gap_ranks cgrs1
+								where
+									cgrs1.serial_id = cg.serial_id
+										and
+									cgrs1.platform_id = cg.platform_id)
+				and cg.end_time =  s.time
+			inner join
+		sensors_involved si
+				on si.serial_participant_start = cg.start_time
+				and si.platform_id = cg.platform_id
+				and si.serial_id = cg.serial_id
 ),
 inner_coverage as (
 	select
@@ -244,6 +345,30 @@ consolidated_coverage as (
 		serial_id
 	from
 		coverage_at_serial_end
+	union all
+	select
+		start_time,
+		end_time,
+		platform_id,
+		serial_id
+	from
+		participation_sans_gap
+	union all
+	select
+		start_time,
+		end_time,
+		platform_id,
+		serial_id
+	from
+		act_with_same_part_and_gap_start
+	union all
+	select
+		start_time,
+		end_time,
+		platform_id,
+		serial_id
+	from
+		act_with_same_part_and_gap_end
 ),
 consolidated_stats as (
 	select 
@@ -281,4 +406,6 @@ where
 order by
 	serial_id asc,
 	platform_id asc,
-	start_time asc;
+	start_time asc,
+	end_time asc;
+
