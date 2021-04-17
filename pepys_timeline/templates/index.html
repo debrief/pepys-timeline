@@ -151,6 +151,8 @@
 	<script type="text/javascript">
 		moment.locale("en");
 
+		const fetchedSerials = false;
+
 		function onDataReceived() {
 			console.log('on data received');
 		}
@@ -172,6 +174,7 @@
             .then(response => {
             	const { frequency_secs } = response;
             	fetchSerials();
+            	fetchedSerials = true;
             	setInterval(fetchSerials, frequency_secs * 1000);
 
             })
@@ -232,7 +235,12 @@
 				const data = JSON.parse(JSON.stringify(transformedData[i % 2]))
 
 				// create new chart instance
-				charts[i] = visavail.generate(options, data);
+				if (!fetchedSerials) {
+					charts[i] = visavail.generate(options, data);
+				}
+				else {
+					charts[i].updateGraph(data);
+				}
 			}
 
 			// resize timelines on page resize
