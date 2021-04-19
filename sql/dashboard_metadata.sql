@@ -8,7 +8,9 @@ latest_serials as (
 	from
 		pepys."Serials" s
 	where 
-		s.end::date::timestamp = (clock_timestamp()::date)-interval '1 day'
+		s.start::date = to_char(:start_date, 'YYYY-MM-DD')
+			and
+		s.end::date = to_char(:end_date, 'YYYY-MM-DD')
 ),
 participating_platforms as (
 	select

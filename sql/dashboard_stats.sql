@@ -393,9 +393,7 @@ select
 	range_type,
 	start_time,
 	end_time,
-	platform_id,
-	serial_id,
-	to_char(end_time-start_time, 'HH24:MI:SS') delta
+	platform_id
 from
 	consolidated_stats
 where
@@ -404,7 +402,6 @@ where
 				from
 					range_types)
 order by
-	serial_id asc,
 	platform_id asc,
 	start_time asc,
 	end_time asc;
