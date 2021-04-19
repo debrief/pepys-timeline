@@ -1,8 +1,24 @@
+--droping existing pepys.dashboard_stats function
+drop function if exists pepys.dashboard_stats;
+
+--creating pepys.dashboard_stats function
+create function pepys.dashboard_stats(
+	ui_inp_ser_plat_json text,
+	ui_inp_range_type text)
+returns table (
+	resp_range_type text,
+	resp_start_time timestamp without time zone,
+	resp_end_time timestamp without time zone,
+	resp_platform_id uuid)
+as
+$$
+begin
+	return query
 with 
 serial_participants_input_json as (
 	select 
-		<spij_string_bind_variable>::json spij, -- Example:  '[ { "serial_id": "faa18ef7-6823-33dc-0f16-de6e4b2c02f3", "platform_id": "50d64387-9f91-4c6f-8933-f4e7b1a7d8ab", "start": "2020-11-15 00:00:00", "end": "2020-11-15 23:59:59", "gap_seconds": 30 } ]'
-		<range_type_string_bind_variable>::json range_types 		-- Example: '[ "C", "G" ]'
+		ui_inp_ser_plat_json::json spij,
+		ui_inp_range_type::json range_types
 ),
 range_types as (
 	select
@@ -405,4 +421,7 @@ order by
 	platform_id asc,
 	start_time asc,
 	end_time asc;
+end;
+$$
+language plpgsql;
 
