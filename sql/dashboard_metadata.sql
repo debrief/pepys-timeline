@@ -10,6 +10,7 @@ returns table (
 	serial_id uuid,
 	platform_id uuid,
 	"name" text,
+	exercise text,
 	platform_type_name text,
 	"start" timestamp without time zone,
 	"end" timestamp without time zone,
@@ -23,7 +24,7 @@ latest_serials as (
 	select 
 		s.serial_id,
 		s.serial_number::text serial_name,
-		s.exercise,
+		s.exercise::text,
 		s.start serial_start,
 		s.end serial_end
 	from
