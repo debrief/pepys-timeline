@@ -23,6 +23,7 @@ latest_serials as (
 	select 
 		s.serial_id,
 		s.serial_number::text serial_name,
+		s.exercise,
 		s.start serial_start,
 		s.end serial_end
 	from
@@ -63,6 +64,7 @@ select
 	s.serial_id,
 	NULL platform_id,
 	s.serial_name "name",
+	s.exercise,
 	NULL platform_type_name,
 	s.serial_start "start",
 	s.serial_end "end",
@@ -75,24 +77,12 @@ select
 	pp.serial_id,
 	pp.platform_id,
 	pp.platform_name "name",
+	NULL exercise,
 	pp.platform_type_name,
 	pp.serial_participant_start "start",
 	pp.serial_participant_end "end",
 	pp.gap_seconds
 from
-	participating_platforms pp
-union all
-select
-	distinct
-	'PARTICIPANTS' record_type,
-	NULL::uuid serial_id,
-	pp.platform_id,
-	pp.platform_name "name",
-	pp.platform_type_name,
-	NULL::timestamp "start",
-	NULL::timestamp "end",
-	NULL::int gap_seconds
-from 
 	participating_platforms pp
 order by 
 	record_type desc,
