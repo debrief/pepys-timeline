@@ -1,0 +1,95 @@
+body {
+    background-color: lightgray  !important;
+    font-family: "Muli", "Helvetica", Arial, sans-serif;
+}
+
+.visavail .rect_has_no_data {
+    fill: lightgray;
+}
+.visavail .rect_has_no_data:hover {
+    fill: lightgray;
+}
+.visavail .rect_has_data {
+    fill: #494949;
+}
+.visavail .rect_has_data:hover {
+    fill: #494949;
+}
+.horz_grid {
+    opacity: 0;
+}
+.visavail-tooltip {
+    opacity: 0;
+}
+.ytitle {
+    paint-order: stroke;
+    stroke: #000000;
+    fill: #ffffff;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round
+}
+.visavail .ytitle_icon_image {
+    display: block;
+}
+.visavail .ytitle_icon_background {
+    display: block;
+    fill: #4287f566
+}
+.merchant {
+    fill: #4287f566 !important;
+}
+.jammer {
+    fill: #f5424866 !important;
+}
+.missile {
+    fill: #f5c84266 !important;
+}
+.ypercentage {
+    paint-order: stroke;
+    stroke: #000000;
+    fill: #ffffff;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round
+}
+.ypercentage_red {
+    paint-order: stroke;
+    fill: #f54242;
+    stroke-linecap: round;
+    stroke-linejoin: round
+}
+.ypercentage_amber {
+    paint-order: stroke;
+    fill: #f5b642;
+    stroke-linecap: round;
+    stroke-linejoin: round
+}
+.ypercentage_green {
+    paint-order: stroke;
+    fill: #0aa834;
+    stroke-linecap: round;
+    stroke-linejoin: round
+}
+
+
+
+#toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.platform-heading {
+    margin-bottom: 0;
+    text-align: center;
+    line-height: 2;
+    font-weight: bold;
+    border-radius: 0.5em;
+    background-color: #0dac50;
+    color: white;
+}
+
+.heading {
+    border: 1px solid gray;
+}
