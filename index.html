@@ -6,34 +6,28 @@
 	<title>Pepys Coverage</title>
 
 	<!-- Visavail.js style -->
-	<link href='https://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
 	<link href='https://unpkg.com/visavail@1.5.0/visavail.min.css' rel='stylesheet' type='text/css'>
 	<link href='./css/style.css' rel='stylesheet' type='text/css'>
 	<link href="./css/bootstrap-material-design.min.css" rel="stylesheet" type='text/css'>
 	<!-- font-awesome -->
-	<link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Mulish" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css"
 		integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
 
 </head>
 
 <body>
+	<nav class="navbar navbar-light bg-dark">
+		<span class="navbar-brand text-light">
+			<h2>Pepys Coverage</h2>
+		</span>
+		<button type="button" class="btn btn-raised btn-success" id="data-received-button"
+			onclick="onDataReceived()">
+			Data Received
+		</button>
+	</nav>
+	<div class="m-5"></div>
 	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-12">
-				<h1>Pepys Coverage</h1>
-			</div>
-		</div>
-		<div class="row flex-row-reverse">
-			<div class="col-md-12 p-3">
-				<div id="toolbar">
-					<button type="button" class="btn btn-outline-success" id="data-received-button"
-						onclick="onDataReceived()">
-						Data Received
-					</button>
-				</div>
-			</div>
-		</div>
 		<div id="chart_row" class="row justify-content-center">
 			<!-- <div class="col-md-3 col-xl-2">
 				<div class="card">
@@ -242,7 +236,7 @@
 			margin: {
 				right: 30,
 				left: 40,
-				top: 30,
+				top: 10,
 				bottom: 0
 			},
 			padding: {
@@ -292,7 +286,7 @@
 		function addChartDiv(index, header) {
 
 			var newDiv = document.createElement('div');
-			htmlString = '<div class="card"><div class="card-header"><h5>'+header+'</h5></div><div style="overflow: hidden;" class="visavail" id="visavail_container_new_'+index+'"><p id="visavail_graph_new_'+index+'"></p></div></div>'
+			htmlString = '<div class="card"><div class="card-header text-center"><h5>'+header+'</h5></div><div style="overflow: hidden;" class="visavail" id="visavail_container_new_'+index+'"><p id="visavail_graph_new_'+index+'"></p></div></div>'
 			newDiv.innerHTML = htmlString.trim();
 			newDiv.classList.add("col-md-3")
 			newDiv.classList.add("col-xl-2")

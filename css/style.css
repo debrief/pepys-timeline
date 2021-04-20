@@ -1,6 +1,10 @@
 body {
     background-color: lightgray  !important;
-    font-family: "Muli", "Helvetica", Arial, sans-serif;
+    font-family: "Mulish", "Helvetica", Arial, sans-serif !important;
+}
+
+h1,h2,h3,h4,h5 {
+    font-weight: 900 !important;
 }
 
 .visavail .rect_has_no_data {
@@ -10,10 +14,10 @@ body {
     fill: lightgray;
 }
 .visavail .rect_has_data {
-    fill: #494949;
+    fill: #636161;
 }
 .visavail .rect_has_data:hover {
-    fill: #494949;
+    fill: #636161;
 }
 .horz_grid {
     opacity: 0;
@@ -21,13 +25,14 @@ body {
 .visavail-tooltip {
     opacity: 0;
 }
-.ytitle {
+.visavail .ytitle {
     paint-order: stroke;
     stroke: #000000;
     fill: #ffffff;
     stroke-width: 4px;
     stroke-linecap: round;
-    stroke-linejoin: round
+    stroke-linejoin: round;
+    text-shadow: #000000 0px 0px 4px;
 }
 .visavail .ytitle_icon_image {
     display: block;
@@ -45,40 +50,39 @@ body {
 .missile {
     fill: #f5c84266 !important;
 }
-.ypercentage {
+.visavail .ypercentage {
     paint-order: stroke;
     stroke: #000000;
     fill: #ffffff;
-    stroke-width: 2px;
+    stroke-width: 3px;
     stroke-linecap: round;
-    stroke-linejoin: round
+    stroke-linejoin: round;
+    text-shadow: #000000 0px 0px 9px;
 }
-.ypercentage_red {
+.visavail .ypercentage_red {
     paint-order: stroke;
     fill: #f54242;
     stroke-linecap: round;
-    stroke-linejoin: round
+    stroke-linejoin: round;
 }
-.ypercentage_amber {
+.visavail .ypercentage_amber {
     paint-order: stroke;
     fill: #f5b642;
     stroke-linecap: round;
-    stroke-linejoin: round
+    stroke-linejoin: round;
 }
-.ypercentage_green {
+.visavail .ypercentage_green {
     paint-order: stroke;
-    fill: #0aa834;
+    fill: #43c761;
     stroke-linecap: round;
-    stroke-linejoin: round
+    stroke-linejoin: round;
 }
 
-
-
-#toolbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+.visavail .ypercentage, .visavail .ytitle {
+    font-family: "Mulish", "Helvetica", Arial, sans-serif !important;
+    font-weight: 900;
 }
+
 
 .platform-heading {
     margin-bottom: 0;
