@@ -9,7 +9,8 @@ returns table (
 	resp_range_type text,
 	resp_start_time timestamp without time zone,
 	resp_end_time timestamp without time zone,
-	resp_platform_id uuid)
+	resp_platform_id uuid,
+	resp_serial_id uuid)
 as
 $$
 begin
@@ -131,7 +132,7 @@ inner_gaps as (
 				on s.platform_id=e.platform_id
 				and s.serial_id=e.serial_id
 				and s.rowno=e.rowno-1
-				and e.time-s.time > 5 * s.gap_seconds *  interval '1 second'
+				and e.time-s.time > s.gap_seconds *  interval '1 second'
 ),
 edge_cases as ( --Identify boundary cases for all platform, serial combination
 	select
@@ -157,7 +158,7 @@ gaps_at_serial_start as (
 		participating_platforms pp
 				on ec.platform_id = pp.platform_id
 				and ec.serial_id = pp.serial_id
-				and ec.start_time - pp.serial_participant_start > 5 * pp.gap_seconds * interval '1 second'
+				and ec.start_time - pp.serial_participant_start > pp.gap_seconds * interval '1 second'
 ),
 gaps_at_serial_end as (
 	select
@@ -171,7 +172,7 @@ gaps_at_serial_end as (
 		participating_platforms pp
 				on ec.platform_id = pp.platform_id
 				and ec.serial_id = pp.serial_id
-				and pp.serial_participant_end - ec.end_time > 5 * pp.gap_seconds * interval '1 second'
+				and pp.serial_participant_end - ec.end_time > pp.gap_seconds * interval '1 second'
 ),
 consolidated_gaps as (
 	select
@@ -409,7 +410,8 @@ select
 	range_type,
 	start_time,
 	end_time,
-	platform_id
+	platform_id,
+	serial_id
 from
 	consolidated_stats
 where
@@ -418,6 +420,7 @@ where
 				from
 					range_types)
 order by
+	serial_id asc,
 	platform_id asc,
 	start_time asc,
 	end_time asc;
