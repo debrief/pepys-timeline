@@ -35,6 +35,7 @@ serial_participants_json as (
 ),
 participating_platforms as (
 	select
+		row_number() over () ser_idx,
 		(spj->>'serial_id')::uuid serial_id,
 		(spj->>'platform_id')::uuid platform_id,
 		(spj->>'start')::timestamp serial_participant_start,
@@ -50,7 +51,8 @@ sensors_involved as (
 		pp.gap_seconds,
 		pp.serial_participant_start,
 		pp.serial_participant_end,
-		pp.serial_id
+		pp.serial_id,
+		pp.ser_idx
 	from
 		participating_platforms pp
 			inner join
@@ -82,10 +84,11 @@ states_involved as (
 state_time_rankings as (
 	select 
 		s.time, 
-		row_number() over (partition by si.serial_id, si.platform_id order by s.time asc) as rowno,
+		row_number() over (partition by si.serial_id, si.platform_id, si.ser_idx order by s.time asc) as rowno,
 		si.platform_id,
 		si.gap_seconds,
-		si.serial_id
+		si.serial_id,
+		si.ser_idx
 	from 
 		states_involved s
 			inner join
@@ -101,7 +104,8 @@ participation_sans_activity as (
 		si.serial_participant_start start_time,
 		si.serial_participant_end end_time,
 		si.platform_id,
-		si.serial_id
+		si.serial_id,
+		si.ser_idx
 	from
 		sensors_involved si
 	where
@@ -110,6 +114,8 @@ participation_sans_activity as (
 						state_time_rankings s
 					where 
 						s.serial_id = si.serial_id
+							and 
+						s.ser_idx = si.ser_idx
 							and 
 						s.platform_id = si.platform_id
 							and
@@ -124,13 +130,15 @@ inner_gaps as (
 		s.time start_time,
 		e.time end_time,
 		s.platform_id,
-		s.serial_id
+		s.serial_id,
+		s.ser_idx
 	from
 		state_time_rankings s
 			inner join
 		state_time_rankings e
 				on s.platform_id=e.platform_id
 				and s.serial_id=e.serial_id
+				and s.ser_idx=e.ser_idx
 				and s.rowno=e.rowno-1
 				and e.time-s.time > s.gap_seconds *  interval '1 second'
 ),
@@ -138,26 +146,30 @@ edge_cases as ( --Identify boundary cases for all platform, serial combination
 	select
 		str.platform_id,
 		str.serial_id,
+		str.ser_idx,
 		min(str.time) start_time, --Start
 		max(str.time) end_time --End
 	from
 		state_time_rankings str
 	group by
 		str.platform_id,
-		str.serial_id
+		str.serial_id,
+		str.ser_idx
 ),
 gaps_at_serial_start as (
 	select
 		pp.serial_participant_start start_time,
 		ec.start_time end_time,
 		ec.platform_id,
-		ec.serial_id
+		ec.serial_id,
+		ec.ser_idx
 	from
 		edge_cases ec
 			inner join
 		participating_platforms pp
 				on ec.platform_id = pp.platform_id
 				and ec.serial_id = pp.serial_id
+				and ec.ser_idx = pp.ser_idx
 				and ec.start_time - pp.serial_participant_start > pp.gap_seconds * interval '1 second'
 ),
 gaps_at_serial_end as (
@@ -165,13 +177,15 @@ gaps_at_serial_end as (
 		ec.end_time start_time,
 		pp.serial_participant_end end_time,
 		ec.platform_id,
-		ec.serial_id
+		ec.serial_id,
+		ec.ser_idx
 	from
 		edge_cases ec
 			inner join
 		participating_platforms pp
 				on ec.platform_id = pp.platform_id
 				and ec.serial_id = pp.serial_id
+				and ec.ser_idx = pp.ser_idx
 				and pp.serial_participant_end - ec.end_time > pp.gap_seconds * interval '1 second'
 ),
 consolidated_gaps as (
@@ -179,7 +193,8 @@ consolidated_gaps as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		inner_gaps
 	union all
@@ -187,7 +202,8 @@ consolidated_gaps as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		gaps_at_serial_start
 	union all
@@ -195,7 +211,8 @@ consolidated_gaps as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		gaps_at_serial_end
 	union all
@@ -203,7 +220,8 @@ consolidated_gaps as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		participation_sans_activity
 ),
@@ -213,7 +231,8 @@ consolidated_gap_ranks as (
 		end_time,
 		platform_id,
 		serial_id,
-		row_number() over (partition by serial_id, platform_id order by start_time asc) as rowno
+		ser_idx,
+		row_number() over (partition by serial_id, platform_id, ser_idx order by start_time asc) as rowno
 	from
 		consolidated_gaps
 ),
@@ -222,7 +241,8 @@ participation_sans_gap as (
 		si.serial_participant_start start_time,
 		si.serial_participant_end end_time,
 		si.platform_id,
-		si.serial_id
+		si.serial_id,
+		si.ser_idx
 	from
 		sensors_involved si
 	where
@@ -231,6 +251,8 @@ participation_sans_gap as (
 						consolidated_gaps cg
 					where 
 						si.serial_id = cg.serial_id
+							and
+						si.ser_idx = cg.ser_idx
 							and
 						si.platform_id = cg.platform_id
 							and 
@@ -245,12 +267,14 @@ act_with_same_part_and_gap_start as (
 		cg.start_time,
 		cg.start_time end_time,
 		cg.platform_id,
-		cg.serial_id
+		cg.serial_id,
+		cg.ser_idx
 	from
 		consolidated_gap_ranks cg
 			inner join
 		state_time_rankings s
 				on cg.serial_id = s.serial_id
+				and cg.ser_idx = s.ser_idx
 				and cg.platform_id = s.platform_id
 				and cg.rowno = 1
 				and cg.start_time =  s.time
@@ -259,18 +283,21 @@ act_with_same_part_and_gap_start as (
 				on si.serial_participant_start = cg.start_time
 				and si.platform_id = cg.platform_id
 				and si.serial_id = cg.serial_id
+				and si.ser_idx = cg.ser_idx
 ),
 act_with_same_part_and_gap_end as (
 	select
 		cg.end_time start_time,
 		cg.end_time,
 		cg.platform_id,
-		cg.serial_id
+		cg.serial_id,
+		cg.ser_idx
 	from
 		consolidated_gap_ranks cg
 			inner join
 		state_time_rankings s
 				on cg.serial_id = s.serial_id
+				and cg.ser_idx = s.ser_idx
 				and cg.platform_id = s.platform_id
 				and cg.rowno = (select
 									max(cgrs1.rowno)
@@ -279,6 +306,8 @@ act_with_same_part_and_gap_end as (
 								where
 									cgrs1.serial_id = cg.serial_id
 										and
+									cgrs1.ser_idx = cg.ser_idx
+										and
 									cgrs1.platform_id = cg.platform_id)
 				and cg.end_time =  s.time
 			inner join
@@ -286,19 +315,22 @@ act_with_same_part_and_gap_end as (
 				on si.serial_participant_start = cg.start_time
 				and si.platform_id = cg.platform_id
 				and si.serial_id = cg.serial_id
+				and si.ser_idx = cg.ser_idx
 ),
 inner_coverage as (
 	select
 		cgrs.end_time start_time,
 		cgre.start_time end_time,
 		cgrs.platform_id,
-		cgrs.serial_id
+		cgrs.serial_id,
+		cgrs.ser_idx
 	from
 		consolidated_gap_ranks cgrs
 			inner join
 		consolidated_gap_ranks cgre
 				on cgrs.platform_id = cgre.platform_id
 				and cgrs.serial_id = cgre.serial_id
+				and cgrs.ser_idx = cgre.ser_idx
 				and cgrs.rowno=cgre.rowno-1
 ),
 coverage_at_serial_start as (
@@ -306,13 +338,15 @@ coverage_at_serial_start as (
 		pp.serial_participant_start start_time,
 		cgrs.start_time end_time,
 		cgrs.platform_id,
-		cgrs.serial_id
+		cgrs.serial_id,
+		cgrs.ser_idx
 	from
 		consolidated_gap_ranks cgrs
 			inner join
 		participating_platforms pp
 				on cgrs.platform_id = pp.platform_id
 				and cgrs.serial_id = pp.serial_id
+				and cgrs.ser_idx = pp.ser_idx
 				and cgrs.rowno = 1
 				and cgrs.start_time != pp.serial_participant_start
 ),
@@ -321,19 +355,23 @@ coverage_at_serial_end as (
 		cgrs.end_time start_time,
 		pp.serial_participant_end end_time,
 		cgrs.platform_id,
-		cgrs.serial_id
+		cgrs.serial_id,
+		cgrs.ser_idx
 	from
 		consolidated_gap_ranks cgrs
 			inner join
 		participating_platforms pp
 				on cgrs.platform_id = pp.platform_id
 				and cgrs.serial_id = pp.serial_id
+				and cgrs.ser_idx = pp.ser_idx
 				and cgrs.rowno = (select
 									max(cgrs1.rowno)
 								from
 									consolidated_gap_ranks cgrs1
 								where
 									cgrs1.serial_id = cgrs.serial_id
+										and
+									cgrs1.ser_idx = cgrs.ser_idx
 										and
 									cgrs1.platform_id = cgrs.platform_id)
 				and pp.serial_participant_end != cgrs.end_time
@@ -343,7 +381,8 @@ consolidated_coverage as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		inner_coverage ic
 	union all
@@ -351,7 +390,8 @@ consolidated_coverage as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		coverage_at_serial_start
 	union all
@@ -359,7 +399,8 @@ consolidated_coverage as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		coverage_at_serial_end
 	union all
@@ -367,7 +408,8 @@ consolidated_coverage as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		participation_sans_gap
 	union all
@@ -375,7 +417,8 @@ consolidated_coverage as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		act_with_same_part_and_gap_start
 	union all
@@ -383,7 +426,8 @@ consolidated_coverage as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		act_with_same_part_and_gap_end
 ),
@@ -393,7 +437,8 @@ consolidated_stats as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		consolidated_coverage
 	union all
@@ -402,7 +447,8 @@ consolidated_stats as (
 		start_time,
 		end_time,
 		platform_id,
-		serial_id
+		serial_id,
+		ser_idx
 	from
 		consolidated_gaps
 )
