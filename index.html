@@ -101,10 +101,12 @@
 			var commonDate = new Date("01/01/2020");
 			var stripDateOfChars = date => date.toISOString().slice(0, -5).replace('T', ' ');
 
-			var rawData = [{
+			var rawData = [
+				{
 					"serial": "J05130 - CASEX 324",
 					"start_time": '2016-01-01 10:00:00',
 					"end_time": '2016-01-01 12:00:00',
+					"overall_average": 24,
 					"participants": [{
 							"name": "RICH",
 							"platform-type": 'missile',
@@ -138,9 +140,121 @@
 					]
 				},
 				{
-					"serial": "J05150 - PASSEX 4A",
+					"serial": "J05130 - CASEX 324",
+					"start_time": '2016-01-01 10:00:00',
+					"end_time": '2016-01-01 12:00:00',
+					"overall_average": 24,
+					"participants": [{
+							"name": "RICH",
+							"platform-type": 'missile',
+							"percent-coverage": 55,
+							"coverage": [
+								['2016-01-01 10:00:00', '2016-01-01 10:40:00'],
+								['2016-01-01 10:50:00', '2016-01-01 11:05:00'],
+								['2016-01-01 11:30:00', '2016-01-01 12:00:00'],
+							]
+						},
+						{
+							"name": "DUKE",
+							"platform-type": 'jammer',
+							"percent-coverage": 25,
+							"coverage": [
+								['2016-01-01 10:15:00', '2016-01-01 10:30:00'],
+								['2016-01-01 10:35:00', '2016-01-01 11:00:00'],
+								['2016-01-01 11:40:00', '2016-01-01 12:00:00'],
+							]
+						},
+						{
+							"name": "CUMB",
+							"platform-type": 'merchant',
+							"percent-coverage": 75,
+							"coverage": [
+								['2016-01-01 10:00:00', '2016-01-01 10:05:00'],
+								['2016-01-01 10:45:00', '2016-01-01 11:00:00'],
+								['2016-01-01 11:45:00', '2016-01-01 12:00:00'],
+							]
+						}
+					]
+				},
+				{
+					"serial": "J05210 - PASSEX 5A",
 					"start_time": '2016-01-01 12:00:00',
 					"end_time": '2016-01-01 14:00:00',
+					"overall_average": 75,
+					"participants": [{
+							"name": "TRAV",
+							"platform-type": 'missile',
+							"percent-coverage": 65,
+							"coverage": [
+								['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
+								['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
+								['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
+							]
+						},
+						{
+							"name": "PART",
+							"platform-type": 'jammer',
+							"percent-coverage": 35,
+							"coverage": [
+								['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
+								['2016-01-01 12:35:00', '2016-01-01 13:00:00'],
+								['2016-01-01 13:40:00', '2016-01-01 14:00:00'],
+							]
+						},
+						{
+							"name": "MISH",
+							"platform-type": 'merchant',
+							"percent-coverage": 75,
+							"coverage": [
+								['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
+								['2016-01-01 12:45:00', '2016-01-01 13:00:00'],
+								['2016-01-01 13:45:00', '2016-01-01 14:00:00'],
+							]
+						}
+					]
+				},
+				{
+					"serial": "J05240 - CASEX 477",
+					"start_time": '2016-01-01 12:00:00',
+					"end_time": '2016-01-01 14:00:00',
+					"overall_average": 55,
+					"participants": [{
+							"name": "TRAV",
+							"platform-type": 'missile',
+							"percent-coverage": 65,
+							"coverage": [
+								['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
+								['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
+								['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
+							]
+						},
+						{
+							"name": "PART",
+							"platform-type": 'jammer',
+							"percent-coverage": 35,
+							"coverage": [
+								['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
+								['2016-01-01 12:35:00', '2016-01-01 13:00:00'],
+								['2016-01-01 13:40:00', '2016-01-01 14:00:00'],
+							]
+						},
+						{
+							"name": "MISH",
+							"platform-type": 'merchant',
+							"percent-coverage": 75,
+							"coverage": [
+								['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
+								['2016-01-01 12:45:00', '2016-01-01 13:00:00'],
+								['2016-01-01 13:45:00', '2016-01-01 14:00:00'],
+							]
+						}
+					]
+				},
+				{
+					"serial": "JJ05289 - CASEX 114",
+					"start_time": '2016-01-01 12:00:00',
+					"end_time": '2016-01-01 14:00:00',
+					"overall_average": 45,
 					"participants": [{
 							"name": "TRAV",
 							"platform-type": 'missile',
@@ -173,19 +287,21 @@
 						}
 					]
 				}
+			
+			
 			];
 
 			function calculatePercentageClass(number) {
 				switch (true) {
 
 					case number <= 25:
-						return "ypercentage_red";
+						return "red";
 						break;
 					case number <= 60:
-						return "ypercentage_amber";
+						return "amber";
 						break;
 					case number <= 100:
-						return "ypercentage_green";
+						return "green";
 						break;
 					default:
 						return "ypercentage";
@@ -213,17 +329,17 @@
 						measure: participant.name,
 						icon: {
 							url: "https://raw.githubusercontent.com/debrief/debrief-icons/master/svg/" + participant["platform-type"] + ".svg",
-							width: 24,
-							height: 24,
+							width: 32,
+							height: 32,
 							padding: {
 								left: 0,
-								right: 5
+								right: 8
 							},
 							background_class: participant["platform-type"]
 						},
 						percentage: {
 							measure: participant["percent-coverage"] + " %",
-							class: calculatePercentageClass(participant["percent-coverage"])
+							class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
 						},
 						data: data
 					}
@@ -232,15 +348,15 @@
 
 			const default_options = {
 				margin: {
-					right: 30,
-					left: 40,
+					right: 60,
+					left: 50,
 					top: 10,
 					bottom: 0
 				},
 				padding: {
 					top: 0,
 					bottom: 0,
-					right: -2,
+					right: 45,
 					left: 2
 				},
 				reduce_space_wrap: 2000000000,
@@ -264,10 +380,10 @@
 				responsive: {
 					enabled: false,
 				},
-				line_spacing: 12,
+				line_spacing: 3,
 				ticks_for_graph: 0,
 				graph: {
-					height: 25
+					height: 35
 				},
 				y_percentage: {
 					enabled: true,
@@ -281,13 +397,14 @@
 			// maintain list of charts, so we can resize them on browser resize
 			const charts = []
 
-			function addChartDiv(index, header) {
+			function addChartDiv(index, header, header_class) {
 
 				var newDiv = document.createElement('div');
-				htmlString = '<div class="card"><div class="card-header text-center"><h5>'+header+'</h5></div><div style="overflow: hidden;" class="visavail" id="visavail_container_new_'+index+'"><p id="visavail_graph_new_'+index+'"></p></div></div>'
+				htmlString = '<div class="card"><div class="card-header text-center '+header_class+'"><h5>'+header+'</h5></div><div style="overflow: hidden;" class="visavail" id="visavail_container_new_'+index+'"><p id="visavail_graph_new_'+index+'"></p></div></div>'
 				newDiv.innerHTML = htmlString.trim();
 				newDiv.classList.add("col-md-3")
 				newDiv.classList.add("col-xl-2")
+				newDiv.classList.add("p-1")
 
 				var currentDiv = document.getElementById("chart_row");
 				currentDiv.appendChild(newDiv);
@@ -301,16 +418,17 @@
 				"J05240 - CASEX 477",
 				"JJ05289 - CASEX 114"
 			]
-			for (i = 0; i < 5; i++) {
+			for (i = 0; i < rawData.length; i++) {
 				options.push(default_options)
-				addChartDiv(i+1, header[i])
+				addChartDiv(i+1, rawData[i].serial, ""+calculatePercentageClass(rawData[i].overall_average))
 				// override the target ids
 				options[i].id_div_container = "visavail_container_new_" + (i + 1)
 				options[i].id_div_graph = "visavail_graph_new_" + (i + 1)
 
 				// take deep copy of data. For some reason using a dataset
 				// more than once mangles it
-				const data = JSON.parse(JSON.stringify(transformedData[i % 2]))
+				console.log(rawData[i].serial, rawData[i].overall_average)
+				const data = JSON.parse(JSON.stringify(transformedData[i]))
 
 				// create new chart instance
 				charts[i] = visavail.generate(options[i], data);
