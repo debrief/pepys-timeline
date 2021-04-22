@@ -10,7 +10,7 @@ returns table (
 	resp_start_time timestamp without time zone,
 	resp_end_time timestamp without time zone,
 	resp_platform_id uuid,
-	resp_serial_id uuid)
+	resp_serial_id text)
 as
 $$
 begin
@@ -453,23 +453,26 @@ consolidated_stats as (
 		consolidated_gaps
 )
 select
-	range_type,
-	start_time,
-	end_time,
-	platform_id,
-	serial_id
+	cs.range_type,
+	cs.start_time,
+	cs.end_time,
+	cs.platform_id,
+	ser.serial_number::text
 from
-	consolidated_stats
+	consolidated_stats cs
+	left join
+	pepys."Serials" ser
+		on cs.serial_id = ser.serial_id
 where
 	range_type in (select
 					range_type
 				from
 					range_types)
 order by
-	serial_id asc,
-	platform_id asc,
-	start_time asc,
-	end_time asc;
+	cs.serial_id asc,
+	cs.platform_id asc,
+	cs.start_time asc,
+	cs.end_time asc;
 end;
 $$
 language plpgsql;
