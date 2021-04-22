@@ -1,6 +1,7 @@
 moment.locale("en");
 
 let generatedCharts = false;
+let options = [];
 
 function onDataReceived() {
     console.log('on data received');
@@ -150,29 +151,29 @@ function renderCharts(serials) {
         var currentDiv = document.getElementById("chart_row");
         currentDiv.appendChild(newDiv);
     }
-    // create 5 graphs
-    var options = []
 
-    for (i = 0; i < serials.length; i++) {
-        options.push(default_options);
-        addChartDiv(i+1, serials[i].serial, ""+calculatePercentageClass(serials[i].overall_average))
-        // override the target ids
-        options[i].id_div_container = "visavail_container_new_" + (i + 1)
-        options[i].id_div_graph = "visavail_graph_new_" + (i + 1)
+    if (!generatedCharts) {
+        // create 5 graphs
+        for (i = 0; i < serials.length; i++) {
+            const data = JSON.parse(JSON.stringify(transformedData[i]));
+            options.push(default_options);
+            addChartDiv(i+1, serials[i].serial, ""+calculatePercentageClass(serials[i].overall_average))
+            // override the target ids
+            options[i].id_div_container = "visavail_container_new_" + (i + 1)
+            options[i].id_div_graph = "visavail_graph_new_" + (i + 1)
 
-        // take deep copy of data. For some reason using a dataset
-        // more than once mangles it
-        console.log(serials[i].serial, serials[i].overall_average)
-        const data = JSON.parse(JSON.stringify(transformedData[i]))
+            // take deep copy of data. For some reason using a dataset
+            // more than once mangles it
+            console.log(serials[i].serial, serials[i].overall_average)
 
-        // create new chart instance
-        if (!window.generatedCharts) {
+            // create new chart instance
             charts[i] = visavail.generate(options[i], data);
-            generatedCharts = true;
         }
-        else {
-            charts[i].updateGraph(data);
+        generatedCharts = true;
+    } else {
+        for (i = 0; i < serials.length; i++) {
+            const data = JSON.parse(JSON.stringify(transformedData[i]));
+            charts[i] = visavail.generate(options[i], data);
         }
-        //charts[i] = visavail.generate(options[i], data);
     }
 }
