@@ -1,345 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="utf-8">
-	<title>Pepys Coverage</title>
+	<head>
+		<meta charset="utf-8">
+		<title>Pepys Coverage</title>
+		<link
+            href={{ url_for('static', filename='css/bootstrap-material-design.min.css') }}
+            rel="stylesheet"
+            type='text/css'
+        >
 
-	<!-- favicon -->
-	<link href={{ url_for('static', filename='favicon.ico') }} rel='icon'>
+		<!-- Visavail.js 1.5.0 style -->
+		<link href={{ url_for('static', filename='css/visavail.min.css') }} rel='stylesheet' type='text/css'>
+		<link href={{ url_for('static', filename='css/style.css') }} rel='stylesheet' type='text/css'>
+		<!-- font-awesome -->
+		<link
+            href={{ url_for('static', filename='css/fonts/fontawesome_5_15_3/css/all.css') }}
+            rel='stylesheet'
+            type='text/css'
+        >
 
-	<!-- Visavail.js style -->
-	<link href={{ url_for('static', filename='visavail.css') }} rel='stylesheet' type='text/css'>
-	<link href={{ url_for('static', filename='bootstrap.min.css') }} rel='stylesheet' type='text/css'>
+	</head>
 
-	<!-- font-awesome -->
-	<link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css"
-		integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
-
-	<style type="text/css">
-		body {
-			background-color: lightgray;
-		}
-
-		.col-* {
-			background-color: white;
-		}
-
-		#toolbar {
-			display: flex;
-			flex-direction: row;
-			justify-content: flex-end;
-		}
-
-		.platform-heading {
-			margin-bottom: 0;
-			text-align: center;
-			line-height: 2;
-			font-weight: bold;
-			border-radius: 0.5em;
-			background-color: #0dac50;
-			color: white;
-		}
-
-		#data-received-button {
-			margin-bottom: 50px;
-		}
-
-		.chart-container {
-			height: 100%;
-			background-color: white;
-			border-radius: 0.5em;
-			padding: 10px;
-		}
-
-        .visavail #yAxis {
-            display: none;
-        }
-
-		.visavail .rect_has_no_data {
-			fill: lightgray;
-		}
-
-		.visavail .rect_has_no_data:hover {
-			fill: silver;
-		}
-
-		#visavail_graph>svg>g {
-			transform: translate(100px, 10%);
-		}
-
-		.heading {
-			border: 1px solid gray;
-		}
-	</style>
-
-</head>
-
-<body>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-12">
-				<h1>Pepys Coverage</h1>
-			</div>
+	<body>
+		<nav class="navbar navbar-light bg-dark">
+			<span class="navbar-brand text-light">
+				<h2>Pepys Coverage</h2>
+			</span>
+			<button type="button" class="btn btn-raised btn-success" id="data-received-button"
+				onclick="onDataReceived()">
+				Data Received
+			</button>
+		</nav>
+		<div class="m-4"></div>
+		<div class="container-fluid">
+			<div id="chart_row" class="row justify-content-center p-2"></div>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<div id="toolbar">
-					<button type="button" class="btn btn-success" id="data-received-button" onclick="onDataReceived()">
-						Data Received
-					</button>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<div class="chart-container">
-					<h5 class="platform-heading">J05130 - CASEX 324</h5>
-					<div style="overflow: hidden;" class="visavail" id="visavail_container_1">
-						<p id="visavail_graph_1">
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col">
-				<div class="chart-container">
-					<h5 class="platform-heading">J05130 - CASEX 324</h5>
-					<div style="overflow: hidden;" class="visavail" id="visavail_container_2">
-						<p id="visavail_graph_2">
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col">
-				<div class="chart-container">
-					<h5 class="platform-heading">J05210 - PASSEX 5A</h5>
-					<div style="overflow: hidden;" class="visavail" id="visavail_container_3">
-						<p id="visavail_graph_3">
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col">
-				<div class="chart-container">
-					<h5 class="platform-heading">J05240 - CASEX 477</h5>
-					<div style="overflow: hidden;" class="visavail" id="visavail_container_4">
-						<p id="visavail_graph_4">
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col">
-				<div class="chart-container">
-					<h5 class="platform-heading">J05289 - CASEX 114</h5>
-					<div style="overflow: hidden;" class="visavail" id="visavail_container_5">
-						<p id="visavail_graph_5">
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script src={{ url_for('static', filename='moment-with-locales.min.js') }} type="text/javascript"></script>
+		<!-- Moment 2.22.1 -->
+		<script
+            src={{ url_for('static', filename='js/lib/moment-with-locales.min.js') }}
+            type="text/javascript"
+        >
+        </script>
+		<!-- D3 5.9.2 -->
+		<script src={{ url_for('static', filename='js/lib/d3.min.js') }}></script>
+		<!-- Visavail 1.5.0 -->
+		<script src={{ url_for('static', filename='js/lib/visavail.min.js') }}></script>
 
-	<script src={{ url_for('static', filename='d3.min.js') }}></script>
-	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script> -->
+		<!-- CUSTOM SCRIPT -->
+		<script type="text/javascript">
+			moment.locale("en");
 
-	<script src={{ url_for('static', filename='visavail.js') }}></script>
-	<!-- <script src="../visavail/js/visavail.min.js"></script> -->
+			let fetchedSerials = false;
 
-			var commonDate = new Date("01/01/2020");
-			var stripDateOfChars = date => date.toISOString().slice(0, -5).replace('T', ' ');
+			function onDataReceived() {
+				console.log('on data received');
+			}
 
-			var rawData = [
-				{
-					"serial": "J05130 - CASEX 324",
-					"start_time": '2016-01-01 10:00:00',
-					"end_time": '2016-01-01 12:00:00',
-					"overall_average": 24,
-					"participants": [{
-							"name": "RICH",
-							"platform-type": 'missile',
-							"percent-coverage": 55,
-							"coverage": [
-								['2016-01-01 10:00:00', '2016-01-01 10:40:00'],
-								['2016-01-01 10:50:00', '2016-01-01 11:05:00'],
-								['2016-01-01 11:30:00', '2016-01-01 12:00:00'],
-							]
-						},
-						{
-							"name": "DUKE",
-							"platform-type": 'jammer',
-							"percent-coverage": 25,
-							"coverage": [
-								['2016-01-01 10:15:00', '2016-01-01 10:30:00'],
-								['2016-01-01 10:35:00', '2016-01-01 11:00:00'],
-								['2016-01-01 11:40:00', '2016-01-01 12:00:00'],
-							]
-						},
-						{
-							"name": "CUMB",
-							"platform-type": 'merchant',
-							"percent-coverage": 75,
-							"coverage": [
-								['2016-01-01 10:00:00', '2016-01-01 10:05:00'],
-								['2016-01-01 10:45:00', '2016-01-01 11:00:00'],
-								['2016-01-01 11:45:00', '2016-01-01 12:00:00'],
-							]
-						}
-					]
-				},
-				{
-					"serial": "J05130 - CASEX 324",
-					"start_time": '2016-01-01 10:00:00',
-					"end_time": '2016-01-01 12:00:00',
-					"overall_average": 24,
-					"participants": [{
-							"name": "RICH",
-							"platform-type": 'missile',
-							"percent-coverage": 55,
-							"coverage": [
-								['2016-01-01 10:00:00', '2016-01-01 10:40:00'],
-								['2016-01-01 10:50:00', '2016-01-01 11:05:00'],
-								['2016-01-01 11:30:00', '2016-01-01 12:00:00'],
-							]
-						},
-						{
-							"name": "DUKE",
-							"platform-type": 'jammer',
-							"percent-coverage": 25,
-							"coverage": [
-								['2016-01-01 10:15:00', '2016-01-01 10:30:00'],
-								['2016-01-01 10:35:00', '2016-01-01 11:00:00'],
-								['2016-01-01 11:40:00', '2016-01-01 12:00:00'],
-							]
-						},
-						{
-							"name": "CUMB",
-							"platform-type": 'merchant',
-							"percent-coverage": 75,
-							"coverage": [
-								['2016-01-01 10:00:00', '2016-01-01 10:05:00'],
-								['2016-01-01 10:45:00', '2016-01-01 11:00:00'],
-								['2016-01-01 11:45:00', '2016-01-01 12:00:00'],
-							]
-						}
-					]
-				},
-				{
-					"serial": "J05210 - PASSEX 5A",
-					"start_time": '2016-01-01 12:00:00',
-					"end_time": '2016-01-01 14:00:00',
-					"overall_average": 75,
-					"participants": [{
-							"name": "TRAV",
-							"platform-type": 'missile',
-							"percent-coverage": 65,
-							"coverage": [
-								['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
-								['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
-								['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
-							]
-						},
-						{
-							"name": "PART",
-							"platform-type": 'jammer',
-							"percent-coverage": 35,
-							"coverage": [
-								['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
-								['2016-01-01 12:35:00', '2016-01-01 13:00:00'],
-								['2016-01-01 13:40:00', '2016-01-01 14:00:00'],
-							]
-						},
-						{
-							"name": "MISH",
-							"platform-type": 'merchant',
-							"percent-coverage": 75,
-							"coverage": [
-								['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
-								['2016-01-01 12:45:00', '2016-01-01 13:00:00'],
-								['2016-01-01 13:45:00', '2016-01-01 14:00:00'],
-							]
-						}
-					]
-				},
-				{
-					"serial": "J05240 - CASEX 477",
-					"start_time": '2016-01-01 12:00:00',
-					"end_time": '2016-01-01 14:00:00',
-					"overall_average": 55,
-					"participants": [{
-							"name": "TRAV",
-							"platform-type": 'missile',
-							"percent-coverage": 65,
-							"coverage": [
-								['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
-								['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
-								['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
-							]
-						},
-						{
-							"name": "PART",
-							"platform-type": 'jammer',
-							"percent-coverage": 35,
-							"coverage": [
-								['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
-								['2016-01-01 12:35:00', '2016-01-01 13:00:00'],
-								['2016-01-01 13:40:00', '2016-01-01 14:00:00'],
-							]
-						},
-						{
-							"name": "MISH",
-							"platform-type": 'merchant',
-							"percent-coverage": 75,
-							"coverage": [
-								['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
-								['2016-01-01 12:45:00', '2016-01-01 13:00:00'],
-								['2016-01-01 13:45:00', '2016-01-01 14:00:00'],
-							]
-						}
-					]
-				},
-				{
-					"serial": "JJ05289 - CASEX 114",
-					"start_time": '2016-01-01 12:00:00',
-					"end_time": '2016-01-01 14:00:00',
-					"overall_average": 45,
-					"participants": [{
-							"name": "TRAV",
-							"platform-type": 'missile',
-							"percent-coverage": 65,
-							"coverage": [
-								['2016-01-01 12:00:00', '2016-01-01 12:10:00'],
-								['2016-01-01 12:50:00', '2016-01-01 13:15:00'],
-								['2016-01-01 13:30:00', '2016-01-01 14:00:00'],
-							]
-						},
-						{
-							"name": "PART",
-							"platform-type": 'jammer',
-							"percent-coverage": 35,
-							"coverage": [
-								['2016-01-01 12:15:00', '2016-01-01 12:30:00'],
-								['2016-01-01 12:35:00', '2016-01-01 13:00:00'],
-								['2016-01-01 13:40:00', '2016-01-01 14:00:00'],
-							]
-						},
-						{
-							"name": "MISH",
-							"platform-type": 'merchant',
-							"percent-coverage": 75,
-							"coverage": [
-								['2016-01-01 12:15:00', '2016-01-01 12:25:00'],
-								['2016-01-01 12:45:00', '2016-01-01 13:00:00'],
-								['2016-01-01 13:45:00', '2016-01-01 14:00:00'],
-							]
-						}
-					]
-				}
-			
-			
-			];
+			function fetchSerials() {
+				console.log('fetching serials');
+				fetch('/timelines')
+				  .then(response => response.json())
+				  .then(response => {
+					const { serials } = response;
+					renderCharts(serials);
+				  })
+				  .catch(err => console.error(err));
+			}
+
+			window.onload = (event) => {
+			  fetch('/config')
+				.then(response => response.json())
+				.then(response => {
+					const { frequency_secs } = response;
+					fetchSerials();
+					fetchedSerials = true;
+					setInterval(fetchSerials, frequency_secs * 1000);
+
+				})
+				.catch(err => console.error(err));
+			};
+
 
 			function calculatePercentageClass(number) {
 				switch (true) {
@@ -358,160 +99,136 @@
 
 				};
 			}
-			var transformedData = rawData.map(serial => {
-				return serial.participants.map(participant => {
-					// overall coverage
-					const overall = []
-					for (let index = 0; index < participant.coverage.length; index++) {
-						if (index != 0) {
-							if (new Date(participant.coverage[index - 1][1]).getTime() < new Date(participant.coverage[index][0]).getTime()) {
-								overall.push([participant.coverage[index - 1][1], 0, participant.coverage[index][0]])
+
+			function renderCharts(serials) {
+				var transformedData = serials.map(serial => {
+					return serial.participants.map(participant => {
+						// overall coverage
+						const overall = []
+						for (let index = 0; index < participant.coverage.length; index++) {
+							if (index != 0) {
+								if (new Date(participant.coverage[index - 1][1]).getTime() < new Date(participant.coverage[index][0]).getTime()) {
+									overall.push([participant.coverage[index - 1][1], 0, participant.coverage[index][0]])
+								}
+							} else {
+								overall.push([serial.start_time, 0, participant.coverage[index][1]])
 							}
-						} else {
-							overall.push([serial.start_time, 0, participant.coverage[index][1]])
+							overall.push([participant.coverage[index][0], 1, participant.coverage[index][1]])
+
+
 						}
-						overall.push([participant.coverage[index][0], 1, participant.coverage[index][1]])
-
-		const fetchedSerials = false;
-
-		function onDataReceived() {
-			console.log('on data received');
-		}
-
-		function fetchSerials() {
-        	console.log('fetching');
-        	fetch('/timelines')
-              .then(response => response.json())
-              .then(response => {
-            	const { serials } = response;
-            	renderCharts(serials);
-              })
-              .catch(err => console.error(err));
-        }
-
-		window.onload = (event) => {
-          fetch('/config')
-            .then(response => response.json())
-            .then(response => {
-            	const { frequency_secs } = response;
-            	fetchSerials();
-            	fetchedSerials = true;
-            	setInterval(fetchSerials, frequency_secs * 1000);
-
-            })
-            .catch(err => console.error(err));
-        };
-
-        function renderCharts(serials) {
-        	var transformedData = serials.map(serial => {
-				return serial.participants.map(participant => {
-					// overall coverage
-					const overall = [[serial.start_time, 0, serial.end_time]]
-					const coverage = participant.coverage.map(cov => {
-						return [cov[0], 1, cov[1]]
+						const data = overall
+						return {
+							measure: participant.name,
+							icon: {
+								url: "{{ url_for('static', filename='image/PLATFORM_TYPE.svg') }}".replace("PLATFORM_TYPE", participant["platform-type"]),
+								width: 32,
+								height: 32,
+								padding: {
+									left: 0,
+									right: 8
+								},
+								background_class: participant["platform-type"]
+							},
+							percentage: {
+								measure: participant["percent-coverage"] + " %",
+								class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
+							},
+							data: data
+						}
 					})
-					const data = overall.concat(coverage)
-					return {
-						measure: participant.name,
-						platformType: serial.platformType,
-						percentCoverage: serial.percentCoverage,
-						data: data
-					}
 				})
-			})
 
-			const options = {
-				margin: {
-					right: 0,
-					left: 100,
-					top: 30,
-					bottom: 0
-				},
-				title: {
-					enabled: false,
-					text: serials[0].serial
-				},
-				icon: {
-					class_has_data: 'fas fa-fw fa-check',
-					class_has_no_data: 'fas fa-fw fa-exclamation-circle'
-				},
-				responsive: {
-					enabled: false,
-				},
-				line_spacing: 8,
-				ticks_for_graph: 2
-			};
+				const default_options = {
+					margin: {
+						right: 60,
+						left: 50,
+						top: 10,
+						bottom: 0
+					},
+					padding: {
+						top: 0,
+						bottom: 0,
+						right: 45,
+						left: 2
+					},
+					reduce_space_wrap: 2000000000,
+					title: {
+						enabled: false
+					},
+					sub_title: {
+						enabled: false
+					},
+					legend: {
+						enabled: false
+					},
+					y_title_tooltip: {
+						enabled: false
+					},
 
-			// maintain list of charts, so we can resize them on browser resize
-			const charts = []
+					icon: {
+						class_has_data: 'fas fa-fw fa-check',
+						class_has_no_data: 'fas fa-fw fa-exclamation-circle'
+					},
+					responsive: {
+						enabled: false,
+					},
+					line_spacing: 3,
+					ticks_for_graph: 0,
+					graph: {
+						height: 35
+					},
+					y_percentage: {
+						enabled: true,
+						custom_percentage: true
+					},
+					responsive: {
+						enabled: true
+					}
+				};
 
-			// create 5 graphs
-			for (i = 0; i < 5; i++) {
-				// override the target ids
-				options.id_div_container = "visavail_container_" + (i + 1)
-				options.id_div_graph = "visavail_graph_" + (i + 1)
+				// maintain list of charts, so we can resize them on browser resize
+				const charts = []
 
-				// take deep copy of data. For some reason using a dataset
-				// more than once mangles it
-				const data = JSON.parse(JSON.stringify(transformedData[i % 2]))
+				function addChartDiv(index, header, header_class) {
 
-				// create new chart instance
-				if (!fetchedSerials) {
-					charts[i] = visavail.generate(options, data);
+					var newDiv = document.createElement('div');
+					htmlString = '<div class="card"><div class="card-header text-center '+header_class+'"><h5>'+header+'</h5></div><div style="overflow: hidden;" class="visavail" id="visavail_container_new_'+index+'"><p id="visavail_graph_new_'+index+'"></p></div></div>'
+					newDiv.innerHTML = htmlString.trim();
+					newDiv.classList.add("col-md-3")
+					newDiv.classList.add("col-xl-2")
+					newDiv.classList.add("p-1")
+
+					var currentDiv = document.getElementById("chart_row");
+					currentDiv.appendChild(newDiv);
 				}
-				else {
-					charts[i].updateGraph(data);
+				// create 5 graphs
+				var options = []
+				var header = [
+					"J05130 - CASEX 324",
+					"J05130 - CASEX 324",
+					"J05210 - PASSEX 5A",
+					"J05240 - CASEX 477",
+					"JJ05289 - CASEX 114"
+				]
+				for (i = 0; i < serials.length; i++) {
+					options.push(default_options)
+					addChartDiv(i+1, serials[i].serial, ""+calculatePercentageClass(serials[i].overall_average))
+					// override the target ids
+					options[i].id_div_container = "visavail_container_new_" + (i + 1)
+					options[i].id_div_graph = "visavail_graph_new_" + (i + 1)
+
+					// take deep copy of data. For some reason using a dataset
+					// more than once mangles it
+					console.log(serials[i].serial, serials[i].overall_average)
+					const data = JSON.parse(JSON.stringify(transformedData[i]))
+
+					// create new chart instance
+					charts[i] = visavail.generate(options[i], data);
 				}
 			}
-
-			// resize timelines on page resize
-			window.onresize = function () {
-				const width = getWidth() / 6
-				for (i = 0; i < charts.length; i++) {
-					charts[i].resizeWidth(width)
-				}
-			}
-
-			renderParticipantNames(transformedData);
-        }
-
-		function renderParticipantNames(data) {
-    		<!--  add participant names inside of timelines  -->
-			const graphContainerObjs = document.getElementsByClassName('visavail');
-			console.log('graphContainerObjs', graphContainerObjs);
-			const graphContainers = Array.prototype.slice.call(graphContainerObjs);
-			console.log('graphContainers', graphContainers);
-			graphContainers.forEach((container, containerIndex) => {
-				console.log('container', container);
-				const graph = document.querySelectorAll('#' + container.id + ' > p')[0];
-				console.log('graph', graph);
-				const group = graph.querySelector('svg').querySelector('g');
-				console.log('group', group);
-				const groupData = group.querySelector("#g_data");
-				console.log('groupData', groupData);
-				const datasets = Array.from(groupData.childNodes).filter(function (item) {
-					return item.classList.contains('dataset');
-				});
-				console.log('datasets', datasets);
-				datasets.forEach((dataset, datasetIndex) => {
-					const participantLabel = document.createElementNS("http://www.w3.org/2000/svg", 'text');
-					participantLabel.innerHTML = data[containerIndex  % 2][datasetIndex].measure;
-					participantLabel.setAttribute('x', 0);
-					participantLabel.setAttribute('y', 24);
-					participantLabel.setAttribute('font-size', 'smaller');
-					participantLabel.setAttribute('font-family', 'Arial, Helvetica, sans-serif');
-					participantLabel.classList.add('participant-label');
-					dataset.appendChild(participantLabel);
-				});
-			});
-    	}
-
-			// maintain list of charts, so we can resize them on browser resize
-			const charts = []
-
-			function addChartDiv(index, header, header_class) {
-
-	</script>
-</body>
+		</script>
+		
+	</body>
 
 </html>
