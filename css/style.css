@@ -60,14 +60,8 @@ h1,h2,h3,h4,h5 {
     fill: #f5c84266 !important;
 }
 .visavail .ypercentage {
-    /* paint-order: stroke;
-    stroke: #000000;
-    fill: #ffffff;
-    stroke-width: 3px;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    text-shadow: #000000 0px 0px 9px; */
 }
+
 .visavail .ypercentage_red {
     paint-order: stroke;
     fill: #dc3545;

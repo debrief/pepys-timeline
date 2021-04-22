@@ -24,73 +24,18 @@
 				Data Received
 			</button>
 		</nav>
-		<div class="m-5"></div>
+		<div class="m-4"></div>
 		<div class="container-fluid">
-			<div id="chart_row" class="row justify-content-center">
-				<!-- <div class="col-md-3 col-xl-2">
-					<div class="card">
-						<div class="platform-heading">
-							<h5>J05130 - CASEX 324</h5>
-						</div>
-						<div style="overflow: hidden;" class="visavail" id="visavail_container_1">
-							<p id="visavail_graph_1">
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3 col-xl-2">
-					<div class="card">
-						<div class="platform-heading">
-							<h5>J05130 - CASEX 324</h5>
-						</div>
-						<div style="overflow: hidden;" class="visavail" id="visavail_container_2">
-							<p id="visavail_graph_2">
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3 col-xl-2">
-					<div class="card">
-						<div class="platform-heading">
-							<h5>J05210 - PASSEX 5A</h5>
-						</div>
-						<div style="overflow: hidden;" class="visavail" id="visavail_container_3">
-							<p id="visavail_graph_3">
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3 col-xl-2">
-					<div class="card">
-						<div class="platform-heading">
-							<h5>J05240 - CASEX 477</h5>
-						</div>
-						<div style="overflow: hidden;" class="visavail" id="visavail_container_4">
-							<p id="visavail_graph_4">
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3 col-xl-2">
-					<div class="card">
-						<div class="platform-heading">
-							<h5>JJ05289 - CASEX 114</h5>
-						</div>
-						<div style="overflow: hidden;" class="visavail" id="visavail_container_5">
-							<p id="visavail_graph_5">
-							</p>
-						</div>
-					</div>
-				</div> -->
-			</div>
+			<div id="chart_row" class="row justify-content-center p-2"></div>
 		</div>
 		<!-- Moment 2.22.1 -->
-		<script src="./js/moment-with-locales.min.js" type="text/javascript"></script>
+		<script src="./js/lib/moment-with-locales.min.js" type="text/javascript"></script>
 		<!-- D3 5.9.2 -->
-		<script src="./js/d3.min.js"></script>
+		<script src="./js/lib/d3.min.js"></script>
 		<!-- Visavail 1.5.0 -->
-		<script src="./js/visavail.min.js"></script>
+		<script src="./js/lib/visavail.min.js"></script>
 
+		<!-- CUSTOM SCRIPT -->
 		<script type="text/javascript">
 			moment.locale("en");
 
@@ -328,7 +273,7 @@
 					return {
 						measure: participant.name,
 						icon: {
-							url: "https://raw.githubusercontent.com/debrief/debrief-icons/master/svg/" + participant["platform-type"] + ".svg",
+							url: "./image/" + participant["platform-type"] + ".svg",
 							width: 32,
 							height: 32,
 							padding: {
