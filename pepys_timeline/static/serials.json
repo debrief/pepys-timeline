@@ -4,6 +4,7 @@
       "start_time": "2016-01-01 10:00:00",
       "end_time": "2016-01-01 12:00:00",
       "overall_average": 24,
+      "includeInTimeline": true,
       "participants": [
           {
               "name": "RICH",
@@ -42,6 +43,7 @@
         "start_time": "2016-01-01 10:00:00",
         "end_time": "2016-01-01 12:00:00",
         "overall_average": 24,
+        "includeInTimeline": true,
         "participants": [{
                 "name": "RICH",
                 "platform-type": "missile",
@@ -79,6 +81,7 @@
         "start_time": "2016-01-01 12:00:00",
         "end_time": "2016-01-01 14:00:00",
         "overall_average": 75,
+        "includeInTimeline": true,
         "participants": [{
                 "name": "TRAV",
                 "platform-type": "missile",
@@ -116,6 +119,7 @@
         "start_time": "2016-01-01 12:00:00",
         "end_time": "2016-01-01 14:00:00",
         "overall_average": 55,
+        "includeInTimeline": true,
         "participants": [{
                 "name": "TRAV",
                 "platform-type": "missile",
@@ -153,6 +157,45 @@
         "start_time": "2016-01-01 12:00:00",
         "end_time": "2016-01-01 14:00:00",
         "overall_average": 45,
+        "includeInTimeline": true,
+        "participants": [{
+                "name": "TRAV",
+                "platform-type": "missile",
+                "percent-coverage": 65,
+                "coverage": [
+                    ["2016-01-01 12:00:00", "2016-01-01 12:10:00"],
+                    ["2016-01-01 12:50:00", "2016-01-01 13:15:00"],
+                    ["2016-01-01 13:30:00", "2016-01-01 14:00:00"]
+                ]
+            },
+            {
+                "name": "PART",
+                "platform-type": "jammer",
+                "percent-coverage": 35,
+                "coverage": [
+                    ["2016-01-01 12:15:00", "2016-01-01 12:30:00"],
+                    ["2016-01-01 12:35:00", "2016-01-01 13:00:00"],
+                    ["2016-01-01 13:40:00", "2016-01-01 14:00:00"]
+                ]
+            },
+            {
+                "name": "MISH",
+                "platform-type": "merchant",
+                "percent-coverage": 75,
+                "coverage": [
+                    ["2016-01-01 12:15:00", "2016-01-01 12:25:00"],
+                    ["2016-01-01 12:45:00", "2016-01-01 13:00:00"],
+                    ["2016-01-01 13:45:00", "2016-01-01 14:00:00"]
+                ]
+            }
+        ]
+    },
+    {
+        "serial": "JJ05289 - CASEX 115",
+        "start_time": "2016-01-01 12:00:00",
+        "end_time": "2016-01-01 14:00:00",
+        "overall_average": 45,
+        "includeInTimeline": false,
         "participants": [{
                 "name": "TRAV",
                 "platform-type": "missile",

@@ -145,6 +145,11 @@ function renderCharts(serials) {
         for (i = 0; i < serials.length; i++) {
             console.log(serials[i].serial, serials[i].overall_average);
 
+            if (!serials[i].includeInTimeline) {
+                console.log("Serial flag 'includeInTimeline' false, won't generate chart.");
+                continue;
+            }
+
             // take deep copy of data. For some reason using a dataset
             // more than once mangles it
             const data = JSON.parse(JSON.stringify(transformedSerials[i]));
@@ -163,6 +168,11 @@ function renderCharts(serials) {
     } else {
         console.log('Charts already generated, updating charts.');
         for (i = 0; i < serials.length; i++) {
+            console.log(serials[i].serial, serials[i].overall_average);
+            if (!serials[i].includeInTimeline) {
+                console.log("Serial flag 'includeInTimeline' false, won't update chart.");
+                continue;
+            }
             const data = JSON.parse(JSON.stringify(transformedSerials[i]));
             charts[i].updateGraph(chartOptions[i], data);
         }
