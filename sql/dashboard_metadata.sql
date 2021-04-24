@@ -30,9 +30,10 @@ latest_serials as (
 	from
 		pepys."Serials" s
 	where 
-		s.start::date = to_date(ui_inp_start_date, 'YYYY-MM-DD')
+		--Identify all serials happening during the ui_inp_start_date and ui_inp_end_date
+		s.start::date <= to_date(ui_inp_end_date, 'YYYY-MM-DD')
 			and
-		s.end::date = to_date(ui_inp_end_date, 'YYYY-MM-DD')
+		s.end::date >= to_date(ui_inp_start_date, 'YYYY-MM-DD')
 ),
 participating_platforms as (
 	select
