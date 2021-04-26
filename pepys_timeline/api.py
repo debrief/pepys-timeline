@@ -4,6 +4,7 @@ import json
 from flask import Blueprint, current_app, render_template
 
 from pepys_timeline.config import STATIC_DIR
+from pepys_timeline.db import get_dashboard_metadata, get_dashboard_stats
 
 
 api = Blueprint('api', __name__, url_prefix='')
@@ -28,4 +29,18 @@ def timelines():
 
     return {
         "serials": serials
+    }
+
+
+@api.route('/dashboard_metadata')
+def dashboard_metadata():
+    return {
+        "dashboard_stats": get_dashboard_metadata()
+    }
+
+
+@api.route('/dashboard_stats')
+def dashboard_stats():
+    return {
+        "dashboard_stats": get_dashboard_stats()
     }
