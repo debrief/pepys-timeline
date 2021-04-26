@@ -8,7 +8,7 @@ const defaultOptions = {
     margin: {
         right: 60,
         left: 50,
-        top: 10,
+        top: 30,
         bottom: 0
     },
     padding: {
@@ -39,7 +39,7 @@ const defaultOptions = {
         enabled: false,
     },
     line_spacing: 3,
-    ticks_for_graph: 0,
+    ticks_for_graph: 2,
     graph: {
         height: 35
     },
