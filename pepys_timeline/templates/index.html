@@ -8,7 +8,7 @@
             href="{{ url_for('static', filename='css/bootstrap-material-design.min.css') }}"
             rel="stylesheet"
             type='text/css'
-        >
+        > 
 
 		<!-- Visavail.js 1.5.0 style -->
 		<link
@@ -48,7 +48,7 @@
 		</nav>
 		<div class="m-4"></div>
 		<div class="container-fluid">
-			<div id="chart_row" class="row justify-content-center p-2"></div>
+			<div id="chart_row" class="row p-2 grid" ></div>
 		</div>
 		<!-- Moment 2.22.1 -->
 		<script
@@ -60,6 +60,10 @@
 		<script src="{{ url_for('static', filename='js/vendor/d3.min.js') }}"></script>
 		<!-- Visavail 1.5.0 -->
 		<script src="{{ url_for('static', filename='js/vendor/visavail.min.js') }}"></script>
+		<!-- jQuery 2.2.4 -->
+		<script src="{{ url_for('static', filename='js/vendor/jquery.min.js') }}"></script>
+		<!-- Masonry 4.2.2 -->
+		<script src="{{ url_for('static', filename='js/vendor/masonry.pkgd.min.js') }}"></script>
 
 		<!-- This has to stay here for templating -->
 		<script type="text/javascript">

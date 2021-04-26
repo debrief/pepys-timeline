@@ -92,7 +92,7 @@ function addChartDiv(index, header, header_class) {
     newDiv.innerHTML = htmlString.trim();
     newDiv.classList.add("col-md-3")
     newDiv.classList.add("col-xl-2")
-    newDiv.classList.add("p-1")
+    newDiv.classList.add("p-2")
 
     var currentDiv = document.getElementById("chart_row");
     currentDiv.appendChild(newDiv);
@@ -164,6 +164,12 @@ function renderCharts(serials) {
             charts[i] = visavail.generate(chartOptions[i], data);
         }
         generatedCharts = true;
+        jQuery(function($) {
+            console.log($('.grid'))
+            $('.grid').masonry({
+                    percentPosition: true
+                });
+        })
 
     } else {
         console.log('Charts already generated, updating charts.');
@@ -176,7 +182,12 @@ function renderCharts(serials) {
             const data = JSON.parse(JSON.stringify(transformedSerials[i]));
             charts[i].updateGraph(chartOptions[i], data);
         }
+        jQuery(function($) {
+            console.log($('.grid'))
+            $('.grid').masonry("reloadItems");
+        })
     }
+
 }
 
 
