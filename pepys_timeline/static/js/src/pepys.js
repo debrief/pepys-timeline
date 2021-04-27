@@ -1,8 +1,12 @@
 moment.locale("en");
 
+const DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+
 let generatedCharts = false;
 let charts = [];
 let chartOptions = [];
+let serialsMeta = [];
+let serialsStats = [];
 
 const defaultOptions = {
     margin: {
@@ -57,15 +61,68 @@ function onDataReceived() {
     console.log('on data received');
 }
 
+function fetchConfig() {
+    fetch('/config')
+        .then(response => response.json())
+        .then(response => {
+            const { frequency_secs } = response;
+            fetchSerials();
+            fetchSerialsMeta();
+            setInterval(fetchSerials, frequency_secs * 100);
+
+        })
+        .catch(err => console.error(err));
+}
+
 function fetchSerials() {
     console.log('fetching serials');
     fetch('/timelines')
       .then(response => response.json())
       .then(response => {
         const { serials } = response;
-        renderCharts(serials);
+        //renderCharts(serials);
       })
       .catch(err => console.error(err));
+}
+
+function fetchSerialsMeta() {
+    console.log('fetching serials metadata');
+
+    const url = new URL(window.location + 'dashboard_metadata');
+    const queryParams = new URLSearchParams();
+    queryParams.set('from_date', '2021-01-05');
+    queryParams.set('to_date', '2021-01-05');
+    url.search = queryParams.toString();
+
+    fetch(url)
+      .then(response => response.json())
+      .then(response => {
+        const { dashboard_metadata } = response;
+        console.log('testing dashboard_metadata', response);
+        serialsMeta = dashboard_metadata;
+        fetchSerialsStats();
+      }
+    )
+}
+
+function fetchSerialsStats() {
+  const serialParticipants = serialsMeta.filter(m => m.record_type === "SERIAL PARTICIPANT");
+  const range_types = ["G", "C"];
+
+  let url = new URL(window.location + 'dashboard_stats');
+  let queryParams = new URLSearchParams();
+  queryParams.set('serial_participants', JSON.stringify(serialParticipants));
+  queryParams.set('range_types', JSON.stringify(range_types));
+  url.search = queryParams.toString();
+
+  fetch(url)
+    .then(response => response.json())
+    .then(response => {
+        console.log('testing dashboard_stats', response);
+        const { dashboard_stats } = response;
+        serialsStats = dashboard_stats;
+        renderTimelines();
+    })
 }
 
 function calculatePercentageClass(number) {
@@ -124,7 +181,7 @@ function transformSerials(serials) {
                         left: 0,
                         right: 8
                     },
-                    background_class: participant["platform-type"]
+                    background_class: participant["platform-type"].toLowerCase()
                 },
                 percentage: {
                     measure: participant["percent-coverage"] + " %",
@@ -133,6 +190,70 @@ function transformSerials(serials) {
                 data: data
             }
         })
+    })
+    return transformedData;
+}
+
+function transformSerials2() {
+    const serials = serialsMeta.filter(m => m.record_type === "SERIALS");
+    const participants = serialsMeta.filter(m => m.record_type === "SERIAL PARTICIPANT");
+
+    const transformedData = serials.map(serial => {
+        let currSerialParticipants = participants.filter(p => p.serial_id === serial.serial_id);
+        currSerialParticipants = currSerialParticipants.map(participant => {
+            participant.serial_name = serial.name;
+            participantStats = serialsStats.filter(
+                s => s.resp_platform_id === participant.platform_id
+                && s.resp_serial_id === participant.serial_name
+            )
+            let periods = participantStats.map(s => ([
+                    moment(s.resp_start_time).format(DATETIME_FORMAT),
+                    Number(s.resp_range_type === "C"),
+                    moment(s.resp_end_time).format(DATETIME_FORMAT),
+                ]));
+            participant.coverage = periods;
+
+            const totalParticipation = participantStats
+                .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
+                .reduce((s, d) => s + d, 0);
+            const totalCoverage = participantStats
+                .filter(s => s.resp_range_type === "C")
+                .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
+                .reduce((s, d) => s + d, 0);
+            participant["percent-coverage"] = totalParticipation !== 0 ? totalCoverage / totalParticipation : 0;
+
+            participant["platform-type"] = participant["platform_type_name"];
+
+            return {
+                measure: participant.name,
+                icon: {
+                    url: getParticipantIconUrl(participant),
+                    width: 32,
+                    height: 32,
+                    padding: {
+                        left: 0,
+                        right: 8
+                    },
+                    background_class: participant["platform-type"]
+                },
+                percentage: {
+                    measure: participant["percent-coverage"] + " %",
+                    class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
+                },
+                data: periods
+            }
+        });
+        serial.participants = currSerialParticipants;
+        serial["overall_average"] = participants.length
+            ? (
+                participants
+                  .map(p => p["percent-coverage"])
+                  .reduce((s, d) => s + d, 0)
+                / participants.length
+            )
+            : 0;
+        serial.includeInTimeline = true;  // this should come from the database
+        return serial;
     })
     return transformedData;
 }
@@ -179,49 +300,54 @@ function renderCharts(serials) {
     }
 }
 
+function renderTimelines() {
+    const transformedSerials = transformSerials2();
+    console.log('transformedSerials2', transformedSerials);
+
+    if (!generatedCharts) {
+        console.log('Generating charts.');
+        for (i = 0; i < transformedSerials.length; i++) {
+            console.log(transformedSerials[i].name, transformedSerials[i].overall_average);
+
+            if (!transformedSerials[i].includeInTimeline) {
+                console.log("Serial flag 'includeInTimeline' false, won't generate chart.");
+                continue;
+            }
+
+            // take deep copy of data. For some reason using a dataset
+            // more than once mangles it
+            const data = JSON.parse(JSON.stringify(transformedSerials[i]));
+
+            chartOptions.push({...defaultOptions});
+            addChartDiv(
+                i + 1,
+                transformedSerials[i].name,
+                "" + calculatePercentageClass(transformedSerials[i].overall_average)
+            );
+            // override the target ids
+            chartOptions[i].id_div_container = "visavail_container_new_" + (i + 1);
+            chartOptions[i].id_div_graph = "visavail_graph_new_" + (i + 1);
+
+            // create new chart instance
+            charts[i] = visavail.generate(chartOptions[i], transformedSerials[i].participants);
+        }
+        generatedCharts = true;
+
+    } else {
+        console.log('Charts already generated, updating charts.');
+        for (i = 0; i < serials.length; i++) {
+            console.log(transformedSerials[i].name, transformedSerials[i].overall_average);
+            if (!transformedSerials[i].includeInTimeline) {
+                console.log("Serial flag 'includeInTimeline' false, won't update chart.");
+                continue;
+            }
+            charts[i].updateGraph(chartOptions[i], transformedSerials[i].participants);
+        }
+    }
+}
+
 
 
 window.onload = (event) => {
-  fetch('/config')
-    .then(response => response.json())
-    .then(response => {
-        const { frequency_secs } = response;
-        fetchSerials();
-        setInterval(fetchSerials, frequency_secs * 100);
-
-    })
-    .catch(err => console.error(err));
-
-  const serial_participants = [{
-    "serial_id": "faa18ef7-6823-33dc-0f16-de6e4b2c02f3",
-    "platform_id": "50d64387-9f91-4c6f-8933-f4e7b1a7d8ab",
-    "start": "2020-11-15 00:00:00",
-    "end": "2020-11-15 23:59:59",
-    "gap_seconds": 30
-  }];
-  const range_types = ["G", "C"];
-
-  let url = new URL(window.location + 'dashboard_stats');
-  let queryParams = new URLSearchParams();
-  queryParams.set('serial_participants', JSON.stringify(serial_participants));
-  queryParams.set('range_types', JSON.stringify(range_types));
-  url.search = queryParams.toString();
-
-  fetch(url)
-    .then(response => response.json())
-    .then(response => {
-        console.log('testing dashboard_stats', response);
-    })
-
-  url = new URL(window.location + 'dashboard_metadata');
-  queryParams = new URLSearchParams();
-  queryParams.set('from_date', '2021-01-05');
-  queryParams.set('to_date', '2021-01-05');
-  url.search = queryParams.toString();
-
-  fetch(url)
-    .then(response => response.json())
-    .then(response => {
-        console.log('testing dashboard_metadata', response);
-    })
+  fetchConfig();
 };
