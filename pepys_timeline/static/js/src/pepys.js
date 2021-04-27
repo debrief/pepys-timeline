@@ -191,4 +191,37 @@ window.onload = (event) => {
 
     })
     .catch(err => console.error(err));
+
+  const serial_participants = [{
+    "serial_id": "faa18ef7-6823-33dc-0f16-de6e4b2c02f3",
+    "platform_id": "50d64387-9f91-4c6f-8933-f4e7b1a7d8ab",
+    "start": "2020-11-15 00:00:00",
+    "end": "2020-11-15 23:59:59",
+    "gap_seconds": 30
+  }];
+  const range_types = ["G", "C"];
+
+  let url = new URL(window.location + 'dashboard_stats');
+  let queryParams = new URLSearchParams();
+  queryParams.set('serial_participants', JSON.stringify(serial_participants));
+  queryParams.set('range_types', JSON.stringify(range_types));
+  url.search = queryParams.toString();
+
+  fetch(url)
+    .then(response => response.json())
+    .then(response => {
+        console.log('testing dashboard_stats', response);
+    })
+
+  url = new URL(window.location + 'dashboard_metadata');
+  queryParams = new URLSearchParams();
+  queryParams.set('from_date', '2021-01-05');
+  queryParams.set('to_date', '2021-01-05');
+  url.search = queryParams.toString();
+
+  fetch(url)
+    .then(response => response.json())
+    .then(response => {
+        console.log('testing dashboard_metadata', response);
+    })
 };
