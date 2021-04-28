@@ -66,23 +66,11 @@ function fetchConfig() {
         .then(response => response.json())
         .then(response => {
             const { frequency_secs } = response;
-            fetchSerials();
             fetchSerialsMeta();
-            setInterval(fetchSerials, frequency_secs * 100);
+            setInterval(fetchSerialsMeta, frequency_secs * 1000);
 
         })
         .catch(err => console.error(err));
-}
-
-function fetchSerials() {
-    console.log('fetching serials');
-    fetch('/timelines')
-      .then(response => response.json())
-      .then(response => {
-        const { serials } = response;
-        //renderCharts(serials);
-      })
-      .catch(err => console.error(err));
 }
 
 function fetchSerialsMeta() {
@@ -258,47 +246,6 @@ function transformSerials2() {
     return transformedData;
 }
 
-function renderCharts(serials) {
-    const transformedSerials = transformSerials(serials);
-
-    if (!generatedCharts) {
-        console.log('Generating charts.');
-        for (i = 0; i < serials.length; i++) {
-            console.log(serials[i].serial, serials[i].overall_average);
-
-            if (!serials[i].includeInTimeline) {
-                console.log("Serial flag 'includeInTimeline' false, won't generate chart.");
-                continue;
-            }
-
-            // take deep copy of data. For some reason using a dataset
-            // more than once mangles it
-            const data = JSON.parse(JSON.stringify(transformedSerials[i]));
-
-            chartOptions.push({...defaultOptions});
-            addChartDiv(i + 1, serials[i].serial, "" + calculatePercentageClass(serials[i].overall_average));
-            // override the target ids
-            chartOptions[i].id_div_container = "visavail_container_new_" + (i + 1);
-            chartOptions[i].id_div_graph = "visavail_graph_new_" + (i + 1);
-
-            // create new chart instance
-            charts[i] = visavail.generate(chartOptions[i], data);
-        }
-        generatedCharts = true;
-
-    } else {
-        console.log('Charts already generated, updating charts.');
-        for (i = 0; i < serials.length; i++) {
-            console.log(serials[i].serial, serials[i].overall_average);
-            if (!serials[i].includeInTimeline) {
-                console.log("Serial flag 'includeInTimeline' false, won't update chart.");
-                continue;
-            }
-            const data = JSON.parse(JSON.stringify(transformedSerials[i]));
-            charts[i].updateGraph(chartOptions[i], data);
-        }
-    }
-}
 
 function renderTimelines() {
     const transformedSerials = transformSerials2();
@@ -313,10 +260,6 @@ function renderTimelines() {
                 console.log("Serial flag 'includeInTimeline' false, won't generate chart.");
                 continue;
             }
-
-            // take deep copy of data. For some reason using a dataset
-            // more than once mangles it
-            const data = JSON.parse(JSON.stringify(transformedSerials[i]));
 
             chartOptions.push({...defaultOptions});
             addChartDiv(
