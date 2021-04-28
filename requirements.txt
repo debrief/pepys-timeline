@@ -1,3 +1,4 @@
 Flask
+Flask-CacheBuster
 flask-cors
 psycopg2

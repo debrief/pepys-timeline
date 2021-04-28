@@ -15,8 +15,9 @@ def create_app(config_path: str = None):
 
 
 def register_extensions(app):
-    from pepys_timeline.extensions import cors
+    from pepys_timeline.extensions import cors, cache_buster
     cors.init_app(app)
+    cache_buster.init_app(app)
 
 
 def register_blueprints(app):
