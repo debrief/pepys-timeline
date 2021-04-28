@@ -151,6 +151,49 @@ function addChartDiv(index, header, header_class) {
     currentDiv.appendChild(newDiv);
 }
 
+function transformParticipant(participant, serial) {
+    participant.serial_name = serial.name;
+    participantStats = serialsStats.filter(
+        s => s.resp_platform_id === participant.platform_id
+        && s.resp_serial_id === participant.serial_name
+    )
+    let periods = participantStats.map(s => ([
+            moment(s.resp_start_time).format(DATETIME_FORMAT),
+            Number(s.resp_range_type === "C"),
+            moment(s.resp_end_time).format(DATETIME_FORMAT),
+        ]));
+    participant.coverage = periods;
+
+    const totalParticipation = participantStats
+        .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
+        .reduce((s, d) => s + d, 0);
+    const totalCoverage = participantStats
+        .filter(s => s.resp_range_type === "C")
+        .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
+        .reduce((s, d) => s + d, 0);
+    participant["percent-coverage"] = totalParticipation !== 0 ? totalCoverage / totalParticipation : 0;
+
+    participant["platform-type"] = participant["platform_type_name"];
+
+    return {
+        measure: participant.name,
+        icon: {
+            url: getParticipantIconUrl(participant),
+            width: 32,
+            height: 32,
+            padding: {
+                left: 0,
+                right: 8
+            },
+            background_class: participant["platform-type"]
+        },
+        percentage: {
+            measure: participant["percent-coverage"] + " %",
+            class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
+        },
+        data: periods
+    }
+}
 
 function transformSerials() {
     const serials = serialsMeta.filter(m => m.record_type === "SERIALS");
@@ -158,49 +201,7 @@ function transformSerials() {
 
     const transformedData = serials.map(serial => {
         let currSerialParticipants = participants.filter(p => p.serial_id === serial.serial_id);
-        currSerialParticipants = currSerialParticipants.map(participant => {
-            participant.serial_name = serial.name;
-            participantStats = serialsStats.filter(
-                s => s.resp_platform_id === participant.platform_id
-                && s.resp_serial_id === participant.serial_name
-            )
-            let periods = participantStats.map(s => ([
-                    moment(s.resp_start_time).format(DATETIME_FORMAT),
-                    Number(s.resp_range_type === "C"),
-                    moment(s.resp_end_time).format(DATETIME_FORMAT),
-                ]));
-            participant.coverage = periods;
-
-            const totalParticipation = participantStats
-                .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
-                .reduce((s, d) => s + d, 0);
-            const totalCoverage = participantStats
-                .filter(s => s.resp_range_type === "C")
-                .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
-                .reduce((s, d) => s + d, 0);
-            participant["percent-coverage"] = totalParticipation !== 0 ? totalCoverage / totalParticipation : 0;
-
-            participant["platform-type"] = participant["platform_type_name"];
-
-            return {
-                measure: participant.name,
-                icon: {
-                    url: getParticipantIconUrl(participant),
-                    width: 32,
-                    height: 32,
-                    padding: {
-                        left: 0,
-                        right: 8
-                    },
-                    background_class: participant["platform-type"]
-                },
-                percentage: {
-                    measure: participant["percent-coverage"] + " %",
-                    class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
-                },
-                data: periods
-            }
-        });
+        currSerialParticipants = currSerialParticipants.map(p => transformParticipant(p, serial));
         serial.participants = currSerialParticipants;
         serial["overall_average"] = participants.length
             ? (
