@@ -74,7 +74,7 @@ function fetchConfig() {
         .then(response => {
             const { frequency_secs } = response;
             fetchSerialsMeta();
-            setInterval(fetchSerialsMeta, frequency_secs * 100);
+            setInterval(fetchSerialsMeta, frequency_secs * 1000);
 
         })
         .catch(err => console.error(err));
@@ -192,7 +192,7 @@ function transformParticipant(participant, serial) {
                 left: 0,
                 right: 8
             },
-            background_class: participant["platform-type"]
+            background_color: participant["force_type_color"]
         },
         percentage: {
             measure: participant["percent-coverage"] + " %",
