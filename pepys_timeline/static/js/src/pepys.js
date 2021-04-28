@@ -207,7 +207,9 @@ function transformSerials() {
     const participants = serialsMeta.filter(m => m.record_type === "SERIAL PARTICIPANT");
 
     const transformedData = serials.map(serial => {
-        let currSerialParticipants = participants.filter(p => p.serial_id === serial.serial_id);
+        let currSerialParticipants = participants
+          .filter(p => p.serial_id === serial.serial_id)
+          .sort((p1, p2) => p1.force_type_name > p2.force_type_name);
         currSerialParticipants = currSerialParticipants.map(p => transformParticipant(p, serial));
         serial.participants = currSerialParticipants;
         serial["overall_average"] = participants.length
