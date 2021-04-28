@@ -178,9 +178,10 @@ function transformParticipant(participant, serial) {
         ]));
     participant.coverage = periods;
 
-    const totalParticipation = (new Date(serial.end) - new Date(serial.start)) || 0;
+    const totalParticipation = (new Date(participant.end) - new Date(participant.start)) || 0;
     const totalCoverage = participantStats
         .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
+        .filter(s => s.resp_range_type === "C")
         .reduce((s, d) => s + d, 0);
     participant["percent-coverage"] = totalParticipation !== 0 ? 100 * totalCoverage / totalParticipation : 0;
     participant["platform-type"] = participant["platform_type_name"];
