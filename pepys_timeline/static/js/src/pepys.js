@@ -158,6 +158,13 @@ function addChartDiv(index, header, header_class) {
     chartDiv.appendChild(newDiv);
 }
 
+function sortParticipants(p1, p2) {
+  if (p1.force_type_name > p2.force_type_name) return 1;
+  if (p1.force_type_name < p2.force_type_name) return -1;
+  if (p1.name > p2.name) return 1;
+  if (p1.name < p2.name) return -1;
+}
+
 function transformParticipant(participant, serial) {
     participant.serial_name = serial.name;
     participantStats = serialsStats.filter(
@@ -209,12 +216,7 @@ function transformSerials() {
     const transformedData = serials.map(serial => {
         let currSerialParticipants = participants
           .filter(p => p.serial_id === serial.serial_id)
-          .sort((p1, p2) => {
-            if (p1.force_type_name > p2.force_type_name) return 1;
-            if (p1.force_type_name < p2.force_type_name) return -1;
-            if (p1.name > p2.name) return 1;
-            if (p1.name < p2.name) return -1;
-          })
+          .sort(sortParticipants)
         currSerialParticipants = currSerialParticipants.map(p => transformParticipant(p, serial));
         serial.participants = currSerialParticipants;
         serial["overall_average"] = participants.length
