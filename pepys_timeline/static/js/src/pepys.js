@@ -143,46 +143,8 @@ function addChartDiv(index, header, header_class) {
     currentDiv.appendChild(newDiv);
 }
 
-function transformSerials(serials) {
-    const transformedData = serials.map(serial => {
-        return serial.participants.map(participant => {
-            // overall coverage
-            const overall = [];
-            for (let index = 0; index < participant.coverage.length; index++) {
-                if (index != 0) {
-                    if (new Date(participant.coverage[index - 1][1]).getTime() < new Date(participant.coverage[index][0]).getTime()) {
-                        overall.push([participant.coverage[index - 1][1], 0, participant.coverage[index][0]]);
-                    }
-                } else {
-                    overall.push([serial.start_time, 0, participant.coverage[index][1]]);
-                }
-                overall.push([participant.coverage[index][0], 1, participant.coverage[index][1]]);
-            }
-            const data = overall;
-            return {
-                measure: participant.name,
-                icon: {
-                    url: getParticipantIconUrl(participant),
-                    width: 32,
-                    height: 32,
-                    padding: {
-                        left: 0,
-                        right: 8
-                    },
-                    background_class: participant["platform-type"].toLowerCase()
-                },
-                percentage: {
-                    measure: participant["percent-coverage"] + " %",
-                    class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
-                },
-                data: data
-            }
-        })
-    })
-    return transformedData;
-}
 
-function transformSerials2() {
+function transformSerials() {
     const serials = serialsMeta.filter(m => m.record_type === "SERIALS");
     const participants = serialsMeta.filter(m => m.record_type === "SERIAL PARTICIPANT");
 
@@ -248,7 +210,7 @@ function transformSerials2() {
 
 
 function renderTimelines() {
-    const transformedSerials = transformSerials2();
+    const transformedSerials = transformSerials();
     console.log('transformedSerials2', transformedSerials);
 
     if (!generatedCharts) {
@@ -278,7 +240,7 @@ function renderTimelines() {
 
     } else {
         console.log('Charts already generated, updating charts.');
-        for (i = 0; i < serials.length; i++) {
+        for (i = 0; i < transformedSerials.length; i++) {
             console.log(transformedSerials[i].name, transformedSerials[i].overall_average);
             if (!transformedSerials[i].includeInTimeline) {
                 console.log("Serial flag 'includeInTimeline' false, won't update chart.");
