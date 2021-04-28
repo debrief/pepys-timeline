@@ -198,6 +198,7 @@ function transformParticipant(participant, serial) {
             background_color: participant["force_type_color"]
         },
         percentage: {
+            num: participant["percent-coverage"],
             measure: participant["percent-coverage"].toFixed(2) + " %",
             class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
         },
@@ -215,12 +216,12 @@ function transformSerials() {
           .sort(sortParticipants)
         currSerialParticipants = currSerialParticipants.map(p => transformParticipant(p, serial));
         serial.participants = currSerialParticipants;
-        serial["overall_average"] = participants.length
+        serial["overall_average"] = currSerialParticipants.length
             ? (
-                participants
-                  .map(p => p["percent-coverage"])
+                currSerialParticipants
+                  .map(p => p.percentage.num)
                   .reduce((s, d) => s + d, 0)
-                / participants.length
+                / currSerialParticipants.length
             )
             : 0;
         serial.includeInTimeline = true;  // this should come from the database
