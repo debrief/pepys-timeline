@@ -14,7 +14,9 @@ returns table (
 	platform_type_name text,
 	"start" timestamp without time zone,
 	"end" timestamp without time zone,
-	gap_seconds int)
+	gap_seconds int,
+	force_type_name text,
+	force_type_color text)
 as
 $$
 begin
@@ -45,7 +47,9 @@ participating_platforms as (
 		ls.serial_end,
 		coalesce(sp.start, ls.serial_start) serial_participant_start,
 		coalesce(sp.end, ls.serial_end) serial_participant_end,
-		sp.serial_id
+		sp.serial_id,
+		ft.name::text force_type_name,
+		ft.color::text force_type_color
 	from
 		pepys."SerialParticipants" sp
 			inner join
@@ -57,6 +61,9 @@ participating_platforms as (
 			inner join
 		pepys."PlatformTypes" pt
 				on p.platform_type_id = pt.platform_type_id
+			inner join
+		pepys."ForceTypes" ft
+				on ft.force_type_id=sp.force_type_id
 			inner join
 		latest_serials ls
 				on ls.serial_id = sp.serial_id
@@ -70,7 +77,9 @@ select
 	NULL platform_type_name,
 	s.serial_start "start",
 	s.serial_end "end",
-	NULL gap_seconds
+	NULL gap_seconds,
+	NULL::text force_type_name,
+	NULL::text force_type_color
 from
 	latest_serials s
 union all
@@ -83,7 +92,9 @@ select
 	pp.platform_type_name,
 	pp.serial_participant_start "start",
 	pp.serial_participant_end "end",
-	pp.gap_seconds
+	pp.gap_seconds,
+	pp.force_type_name,
+	pp.force_type_color
 from
 	participating_platforms pp
 order by 
