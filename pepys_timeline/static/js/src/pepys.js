@@ -94,7 +94,15 @@ function fetchSerialsMeta() {
 }
 
 function fetchSerialsStats() {
-  const serialParticipants = serialsMeta.filter(m => m.record_type === "SERIAL PARTICIPANT");
+  const stripParticipant = (  // extract only needed fields
+    {serial_id, platform_id, start, end, gap_seconds}
+  ) => (
+    {serial_id, platform_id, start, end, gap_seconds}
+  );
+
+  const serialParticipants = serialsMeta
+    .filter(m => m.record_type === "SERIAL PARTICIPANT")
+    .map(stripParticipant);
   const range_types = ["G", "C"];
 
   let url = new URL(window.location + 'dashboard_stats');
