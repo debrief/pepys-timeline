@@ -3,10 +3,17 @@ moment.locale("en");
 const DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 let generatedCharts = false;
-let charts = [];
-let chartOptions = [];
-let serialsMeta = [];
-let serialsStats = [];
+let charts;
+let chartOptions;
+let serialsMeta;
+let serialsStats;
+
+function resetState() {
+    charts = [];
+    chartOptions = [];
+    serialsMeta = [];
+    serialsStats = [];
+}
 
 const defaultOptions = {
     margin: {
@@ -67,7 +74,7 @@ function fetchConfig() {
         .then(response => {
             const { frequency_secs } = response;
             fetchSerialsMeta();
-            setInterval(fetchSerialsMeta, frequency_secs * 1000);
+            setInterval(fetchSerialsMeta, frequency_secs * 100);
 
         })
         .catch(err => console.error(err));
@@ -117,7 +124,7 @@ function fetchSerialsStats() {
         console.log('testing dashboard_stats', response);
         const { dashboard_stats } = response;
         serialsStats = dashboard_stats;
-        renderTimelines();
+        renderCharts();
     })
 }
 
@@ -147,8 +154,8 @@ function addChartDiv(index, header, header_class) {
     newDiv.classList.add("col-xl-2")
     newDiv.classList.add("p-1")
 
-    var currentDiv = document.getElementById("chart_row");
-    currentDiv.appendChild(newDiv);
+    var chartDiv = document.getElementById("chart_row");
+    chartDiv.appendChild(newDiv);
 }
 
 function transformParticipant(participant, serial) {
@@ -218,50 +225,43 @@ function transformSerials() {
 }
 
 
-function renderTimelines() {
+function renderCharts() {
+    clearCharts();
     const transformedSerials = transformSerials();
-    console.log('transformedSerials2', transformedSerials);
+    console.log('transformedSerials: ', transformedSerials);
 
-    if (!generatedCharts) {
-        console.log('Generating charts.');
-        for (i = 0; i < transformedSerials.length; i++) {
-            console.log(transformedSerials[i].name, transformedSerials[i].overall_average);
+    console.log('Generating charts.');
+    for (i = 0; i < transformedSerials.length; i++) {
+        console.log(transformedSerials[i].name, transformedSerials[i].overall_average);
 
-            if (!transformedSerials[i].includeInTimeline) {
-                console.log("Serial flag 'includeInTimeline' false, won't generate chart.");
-                continue;
-            }
-
-            chartOptions.push({...defaultOptions});
-            addChartDiv(
-                i + 1,
-                transformedSerials[i].name,
-                "" + calculatePercentageClass(transformedSerials[i].overall_average)
-            );
-            // override the target ids
-            chartOptions[i].id_div_container = "visavail_container_new_" + (i + 1);
-            chartOptions[i].id_div_graph = "visavail_graph_new_" + (i + 1);
-
-            // create new chart instance
-            charts[i] = visavail.generate(chartOptions[i], transformedSerials[i].participants);
+        if (!transformedSerials[i].includeInTimeline) {
+            console.log("Serial flag 'includeInTimeline' false, won't generate chart.");
+            continue;
         }
-        generatedCharts = true;
 
-    } else {
-        console.log('Charts already generated, updating charts.');
-        for (i = 0; i < transformedSerials.length; i++) {
-            console.log(transformedSerials[i].name, transformedSerials[i].overall_average);
-            if (!transformedSerials[i].includeInTimeline) {
-                console.log("Serial flag 'includeInTimeline' false, won't update chart.");
-                continue;
-            }
-            charts[i].updateGraph(chartOptions[i], transformedSerials[i].participants);
-        }
+        chartOptions.push({...defaultOptions});
+        addChartDiv(
+            i + 1,
+            transformedSerials[i].name,
+            "" + calculatePercentageClass(transformedSerials[i].overall_average)
+        );
+        // override the target ids
+        chartOptions[i].id_div_container = "visavail_container_new_" + (i + 1);
+        chartOptions[i].id_div_graph = "visavail_graph_new_" + (i + 1);
+
+        // create new chart instance
+        charts[i] = visavail.generate(chartOptions[i], transformedSerials[i].participants);
     }
 }
 
+function clearCharts() {
+  console.log('Clearing charts.');
+  var chartDiv = document.getElementById("chart_row");
+  chartDiv.innerHTML = "";
+}
 
 
 window.onload = (event) => {
+  resetState();
   fetchConfig();
 };
