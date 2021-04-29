@@ -40,7 +40,7 @@ latest_serials as (
 participating_platforms as (
 	select
 		ep.platform_id,
-		p.name::text platform_name,
+		coalesce(p.quadgraph, upper(substring(p.name,1,4)))::text platform_name,
 		pt.default_data_interval_secs gap_seconds,
 		pt.name::text platform_type_name,
 		ls.serial_start,
