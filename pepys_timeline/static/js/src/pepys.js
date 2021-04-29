@@ -101,10 +101,11 @@ function fetchSerialsMeta() {
 }
 
 function fetchSerialsStats() {
+  // TODO: we need to multiple gap_seconds by 5
   const stripParticipant = (  // extract only needed fields
     {serial_id, platform_id, start, end, gap_seconds}
   ) => (
-    {serial_id, platform_id, start, end, gap_seconds * 5}
+    {serial_id, platform_id, start, end, gap_seconds}
   );
 
   const serialParticipants = serialsMeta
