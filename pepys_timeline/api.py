@@ -46,13 +46,13 @@ def dashboard_metadata():
     }
 
 
-@api.route('/dashboard_stats')
+@api.route('/dashboard_stats', methods=['POST'])
 def dashboard_stats():
-    data = request.args
+    data = request.json
     if any((p not in data for p in ('serial_participants', 'range_types'))):
         return MISSING_PARAMS_MSG, 400
-    serial_participants = json.loads(data.get('serial_participants'))
-    range_types = json.loads(data.get('range_types'))
+    serial_participants = data.get('serial_participants')
+    range_types = data.get('range_types')
     stats = get_dashboard_stats(serial_participants, range_types)
     return {
         "dashboard_stats": stats

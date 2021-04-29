@@ -111,15 +111,20 @@ function fetchSerialsStats() {
   const serialParticipants = serialsMeta
     .filter(m => m.record_type === "SERIAL PARTICIPANT")
     .map(stripParticipant);
-  const range_types = ["G", "C"];
+  const rangeTypes = ["G", "C"];
 
-  let url = new URL(window.location + 'dashboard_stats');
-  let queryParams = new URLSearchParams();
-  queryParams.set('serial_participants', JSON.stringify(serialParticipants));
-  queryParams.set('range_types', JSON.stringify(range_types));
-  url.search = queryParams.toString();
+  const url = new URL(window.location + 'dashboard_stats');
 
-  fetch(url)
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      serial_participants: serialParticipants,
+      range_types: rangeTypes,
+    })
+  })
     .then(response => response.json())
     .then(response => {
         console.log('testing dashboard_stats', response);
