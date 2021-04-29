@@ -179,7 +179,9 @@ function transformParticipant(participant, serial) {
         ]));
     participant.coverage = periods;
 
-    const totalParticipation = (new Date(participant.end) - new Date(participant.start)) || 0;
+    const totalParticipation = participantStats
+        .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
+        .reduce((s, d) => s + d, 0);
     const totalCoverage = participantStats
         .map(s => new Date(s.resp_end_time) - new Date(s.resp_start_time))
         .filter(s => s.resp_range_type === "C")
