@@ -87,7 +87,7 @@ select
 	'SERIAL PARTICIPANT' record_type,
 	pp.serial_id,
 	pp.platform_id,
-	pp.platform_name "name",
+	coalesce(pp.platform_name, 'PLT1') "name",
 	NULL exercise,
 	pp.platform_type_name,
 	pp.serial_participant_start "start",
