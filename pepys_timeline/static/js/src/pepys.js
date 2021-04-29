@@ -105,7 +105,7 @@ function fetchSerialsStats() {
   const stripParticipant = (  // extract only needed fields
     {serial_id, platform_id, start, end, gap_seconds}
   ) => (
-    {serial_id, platform_id, start, end, gap_seconds}
+    {serial_id, platform_id, start, end, gap_seconds: gap_seconds * 5}
   );
 
   const serialParticipants = serialsMeta
