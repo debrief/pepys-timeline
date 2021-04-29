@@ -208,7 +208,7 @@ function transformParticipant(participant, serial) {
         },
         percentage: {
             num: participant["percent-coverage"],
-            measure: Math.round(participant["percent-coverage"]) + " %",
+            measure: Math.round(participant["percent-coverage"]) + "%",
             class: "ypercentage_" + calculatePercentageClass(participant["percent-coverage"])
         },
         data: periods
