@@ -24,16 +24,6 @@ def config():
     }
 
 
-@api.route('/timelines')
-def timelines():
-    with open(os.path.join(STATIC_DIR, 'serials.json'), 'r') as f:
-        serials = json.load(f)
-
-    return {
-        "serials": serials
-    }
-
-
 @api.route('/dashboard_metadata')
 def dashboard_metadata():
     data = request.args
